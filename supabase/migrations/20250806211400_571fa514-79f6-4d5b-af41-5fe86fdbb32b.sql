@@ -1,0 +1,2 @@
+-- Create the missing event_type enum
+CREATE TYPE event_type AS ENUM ('project_created', 'project_updated', 'project_deleted', 'project_phase_changed', 'task_created', 'task_updated', 'task_completed', 'budget_updated', 'weather_alert', 'system_notification');

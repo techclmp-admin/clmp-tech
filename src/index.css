@@ -1,0 +1,230 @@
+/* Mapbox GL CSS - Must be first */
+@import 'mapbox-gl/dist/mapbox-gl.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* macOS-inspired Color System */
+    --background: 0 0% 98%;
+    --foreground: 220 15% 20%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 15% 20%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 15% 20%;
+    
+    /* Primary - Construction Orange with depth */
+    --primary: 25 95% 53%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 25 95% 63%;
+    --primary-dark: 25 95% 43%;
+    
+    /* Secondary - Professional Blue */
+    --secondary: 217 91% 60%;
+    --secondary-foreground: 0 0% 100%;
+    --secondary-glow: 217 91% 70%;
+    
+    /* Accent - Success Green */
+    --accent: 142 71% 45%;
+    --accent-foreground: 0 0% 100%;
+    --accent-glow: 142 71% 55%;
+    
+    /* Neutral System */
+    --muted: 220 13% 96%;
+    --muted-foreground: 220 9% 46%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 25 95% 53%;
+    
+    /* Status Colors */
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --success: 142 71% 45%;
+    --success-foreground: 0 0% 100%;
+    
+    /* Glass Effects */
+    --glass-bg: 0 0% 100% / 0.7;
+    --glass-border: 0 0% 100% / 0.2;
+    
+    /* 3D Shadows */
+    --shadow-3d: 0 8px 32px -4px hsl(220 15% 20% / 0.12), 0 0 0 1px hsl(220 13% 91%);
+    --shadow-3d-hover: 0 12px 40px -4px hsl(220 15% 20% / 0.18), 0 0 0 1px hsl(220 13% 85%);
+    --shadow-inset: inset 0 1px 0 hsl(0 0% 100% / 0.15);
+    
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-glow)) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--secondary-glow)) 100%);
+    --gradient-bg: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(220 13% 96%) 100%);
+    
+    /* Animation Variables */
+    --spring: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    
+    --radius: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.5rem;
+
+    --sidebar-background: 0 0% 100% / 0.7;
+    --sidebar-foreground: 220 15% 20%;
+    --sidebar-primary: 25 95% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 13% 96%;
+    --sidebar-accent-foreground: 220 15% 20%;
+    --sidebar-border: 0 0% 100% / 0.2;
+    --sidebar-ring: 25 95% 53%;
+  }
+
+  .dark {
+    --background: 220 15% 8%;
+    --foreground: 0 0% 95%;
+    --card: 220 15% 10%;
+    --card-foreground: 0 0% 95%;
+    --popover: 220 15% 10%;
+    --popover-foreground: 0 0% 95%;
+    
+    --primary: 25 95% 58%;
+    --primary-foreground: 220 15% 8%;
+    --primary-glow: 25 95% 68%;
+    --primary-dark: 25 95% 48%;
+    
+    --secondary: 217 91% 65%;
+    --secondary-foreground: 220 15% 8%;
+    --secondary-glow: 217 91% 75%;
+    
+    --accent: 142 71% 50%;
+    --accent-foreground: 220 15% 8%;
+    --accent-glow: 142 71% 60%;
+    
+    --muted: 220 15% 15%;
+    --muted-foreground: 220 9% 60%;
+    --border: 220 15% 20%;
+    --input: 220 15% 20%;
+    --ring: 25 95% 58%;
+    
+    --destructive: 0 84% 65%;
+    --destructive-foreground: 220 15% 8%;
+    --warning: 38 92% 55%;
+    --warning-foreground: 220 15% 8%;
+    --success: 142 71% 50%;
+    --success-foreground: 220 15% 8%;
+    
+    --glass-bg: 220 15% 10% / 0.7;
+    --glass-border: 220 15% 25% / 0.2;
+    
+    --shadow-3d: 0 8px 32px -4px hsl(220 15% 5% / 0.3), 0 0 0 1px hsl(220 15% 20%);
+    --shadow-3d-hover: 0 12px 40px -4px hsl(220 15% 5% / 0.4), 0 0 0 1px hsl(220 15% 25%);
+    --shadow-inset: inset 0 1px 0 hsl(0 0% 100% / 0.1);
+    
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-glow)) 100%);
+    --gradient-secondary: linear-gradient(135deg, hsl(var(--secondary)) 0%, hsl(var(--secondary-glow)) 100%);
+    --gradient-bg: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(220 15% 6%) 100%);
+
+    --sidebar-background: 220 15% 10% / 0.7;
+    --sidebar-foreground: 0 0% 95%;
+    --sidebar-primary: 25 95% 58%;
+    --sidebar-primary-foreground: 220 15% 8%;
+    --sidebar-accent: 220 15% 15%;
+    --sidebar-accent-foreground: 0 0% 95%;
+    --sidebar-border: 220 15% 25% / 0.2;
+    --sidebar-ring: 25 95% 58%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    background: var(--gradient-bg);
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Glass Morphism Effects */
+  .glass {
+    background: hsl(var(--glass-bg));
+    backdrop-filter: blur(20px) saturate(1.8);
+    border: 1px solid hsl(var(--glass-border));
+  }
+  
+  /* 3D Card Effects */
+  .card-3d {
+    box-shadow: var(--shadow-3d);
+    transition: all 0.3s var(--ease-out-expo);
+  }
+  
+  .card-3d:hover {
+    box-shadow: var(--shadow-3d-hover);
+    transform: translateY(-2px);
+  }
+  
+  /* Icon Containers */
+  .icon-3d {
+    position: relative;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-3d);
+    transition: all 0.3s var(--ease-out-expo);
+    overflow: hidden;
+  }
+  
+  .icon-3d::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--shadow-inset);
+    pointer-events: none;
+  }
+  
+  .icon-3d:hover {
+    box-shadow: var(--shadow-3d-hover);
+    transform: translateY(-1px) scale(1.02);
+  }
+  
+  /* Gradient Buttons */
+  .btn-gradient-primary {
+    background: var(--gradient-primary);
+    box-shadow: var(--shadow-3d);
+    transition: all 0.3s var(--ease-out-expo);
+  }
+  
+  .btn-gradient-primary:hover {
+    box-shadow: var(--shadow-3d-hover);
+    transform: translateY(-1px);
+  }
+  
+  .btn-gradient-secondary {
+    background: var(--gradient-secondary);
+    box-shadow: var(--shadow-3d);
+    transition: all 0.3s var(--ease-out-expo);
+  }
+  
+  .btn-gradient-secondary:hover {
+    box-shadow: var(--shadow-3d-hover);
+    transform: translateY(-1px);
+  }
+
+  /* Safe Area for Mobile Bottom Nav */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Mobile App-like scrolling */
+  @supports (-webkit-touch-callout: none) {
+    .mobile-scroll {
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+}

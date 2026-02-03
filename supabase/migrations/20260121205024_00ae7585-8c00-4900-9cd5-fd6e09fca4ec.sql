@@ -1,0 +1,82 @@
+-- Add Compliance Tracking features to global feature settings
+INSERT INTO public.global_feature_settings (
+  feature_key,
+  feature_name,
+  enabled,
+  display_name,
+  description,
+  show_as_upcoming,
+  parent_feature_key,
+  category,
+  sort_order,
+  requires_subscription,
+  show_in_sidebar,
+  sidebar_order,
+  sidebar_path
+) VALUES 
+(
+  'compliance_tracking',
+  'Compliance Tracking',
+  true,
+  'Compliance Tracking',
+  'Track permits, inspections, and OBC compliance for construction projects',
+  false,
+  NULL,
+  'compliance',
+  60,
+  NULL,
+  true,
+  8,
+  '/compliance'
+),
+(
+  'permit_tracking',
+  'Permit Tracking',
+  true,
+  'Permit Tracking',
+  'Track building permits and their approval status',
+  false,
+  'compliance_tracking',
+  'compliance',
+  61,
+  NULL,
+  false,
+  NULL,
+  NULL
+),
+(
+  'inspection_tracking',
+  'Inspection Tracking',
+  true,
+  'Inspection Tracking',
+  'Schedule and track construction inspections',
+  false,
+  'compliance_tracking',
+  'compliance',
+  62,
+  NULL,
+  false,
+  NULL,
+  NULL
+),
+(
+  'obc_compliance',
+  'OBC Compliance',
+  true,
+  'OBC Compliance',
+  'Ontario Building Code compliance tracking and verification',
+  false,
+  'compliance_tracking',
+  'compliance',
+  63,
+  NULL,
+  false,
+  NULL,
+  NULL
+)
+ON CONFLICT (feature_key) DO UPDATE SET
+  feature_name = EXCLUDED.feature_name,
+  display_name = EXCLUDED.display_name,
+  description = EXCLUDED.description,
+  category = EXCLUDED.category,
+  parent_feature_key = EXCLUDED.parent_feature_key;

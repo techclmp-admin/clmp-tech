@@ -1,0 +1,52 @@
+project_id = "nkvhihqkfeqqkqhgthsv"
+
+[functions.stripe-checkout]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.stripe-portal]
+verify_jwt = false
+
+[functions.stripe-setup-products]
+verify_jwt = false
+
+[functions.ai-risk-analysis]
+verify_jwt = false
+
+[functions.get-weather]
+verify_jwt = false
+
+[functions.geocode-location]
+verify_jwt = false
+
+[functions.send-email]
+verify_jwt = false
+
+[functions.send-invitation]
+verify_jwt = false
+
+[functions.bot-detection]
+verify_jwt = false
+
+[functions.delete-user]
+verify_jwt = false
+
+[functions.quickbooks-export]
+verify_jwt = false
+
+[functions.quickbooks-oauth]
+verify_jwt = false
+
+[functions.scan-receipt]
+verify_jwt = false
+
+[functions.ai-chat]
+verify_jwt = false
+
+[functions.send-bulk-email]
+verify_jwt = false
+
+[functions.resend-webhook]
+verify_jwt = false

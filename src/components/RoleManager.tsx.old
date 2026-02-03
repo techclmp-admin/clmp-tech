@@ -1,0 +1,317 @@
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useRoles } from '@/hooks/useRoles';
+import { 
+  Card, 
+  CardContent, 
+  CardDescription, 
+  CardHeader, 
+  CardTitle 
+} from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import { 
+  Users, 
+  Plus, 
+  Shield, 
+  UserPlus,
+  Trash2,
+  Search 
+} from 'lucide-react';
+import { RoleGuard } from './RoleGuard';
+
+export const RoleManager: React.FC = () => {
+  const { 
+    roles, 
+    assignRole, 
+    removeRole, 
+    isAssigningRole, 
+    isRemovingRole 
+  } = useRoles();
+  
+  const [selectedUserId, setSelectedUserId] = useState('');
+  const [selectedRoleId, setSelectedRoleId] = useState('');
+  const [selectedProjectId, setSelectedProjectId] = useState('global');
+  const [searchEmail, setSearchEmail] = useState('');
+  const [isAssignDialogOpen, setIsAssignDialogOpen] = useState(false);
+
+  // Fetch users (simplified - in real app would have pagination)
+  const { data: users } = useQuery({
+    queryKey: ['users-for-roles'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(50);
+      
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Fetch projects for role assignment
+  const { data: projects } = useQuery({
+    queryKey: ['projects-for-roles'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('projects')
+        .select('id, name')
+        .order('name');
+      
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  // Fetch user roles with expanded data
+  const { data: userRolesExpanded } = useQuery({
+    queryKey: ['user-roles-expanded'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select(`
+          *,
+          role:roles(*),
+          project:projects(name),
+          profile:profiles(first_name, last_name, email)
+        `)
+        .eq('status', 'active')
+        .order('assigned_at', { ascending: false });
+      
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const handleAssignRole = async () => {
+    if (!selectedUserId || !selectedRoleId) return;
+    
+    await assignRole({
+      userId: selectedUserId,
+      roleId: selectedRoleId,
+      projectId: selectedProjectId === 'global' ? undefined : selectedProjectId,
+    });
+    
+    // Reset form
+    setSelectedUserId('');
+    setSelectedRoleId('');
+    setSelectedProjectId('global');
+    setIsAssignDialogOpen(false);
+  };
+
+  const filteredUsers = users?.filter(user =>
+    user.email?.toLowerCase().includes(searchEmail.toLowerCase()) ||
+    `${user.first_name} ${user.last_name}`.toLowerCase().includes(searchEmail.toLowerCase())
+  );
+
+  return (
+    <RoleGuard adminOnly>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-2xl font-bold">Role Management</h2>
+            <p className="text-muted-foreground">
+              Manage user roles and permissions across the system
+            </p>
+          </div>
+          
+          <Dialog open={isAssignDialogOpen} onOpenChange={setIsAssignDialogOpen}>
+            <DialogTrigger asChild>
+              <Button className="shadow-3d hover:shadow-3d-hover">
+                <UserPlus className="mr-2 h-4 w-4" />
+                Assign Role
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="card-3d">
+              <DialogHeader>
+                <DialogTitle>Assign Role to User</DialogTitle>
+                <DialogDescription>
+                  Select a user and role to assign permissions
+                </DialogDescription>
+              </DialogHeader>
+              
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="user-search">Search User</Label>
+                  <div className="relative">
+                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="user-search"
+                      placeholder="Search by email or name..."
+                      value={searchEmail}
+                      onChange={(e) => setSearchEmail(e.target.value)}
+                      className="pl-8"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="user-select">Select User</Label>
+                  <Select value={selectedUserId} onValueChange={setSelectedUserId}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose a user" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {filteredUsers?.map((user) => (
+                        <SelectItem key={user.id} value={user.id}>
+                          <div className="flex items-center space-x-2">
+                            <Avatar className="h-6 w-6">
+                              <AvatarFallback className="text-xs">
+                                {user.first_name?.[0]}{user.last_name?.[0]}
+                              </AvatarFallback>
+                            </Avatar>
+                            <span>{user.first_name} {user.last_name}</span>
+                            <span className="text-muted-foreground">({user.email})</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="role-select">Select Role</Label>
+                  <Select value={selectedRoleId} onValueChange={setSelectedRoleId}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Choose a role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {roles?.map((role) => (
+                        <SelectItem key={role.id} value={role.id}>
+                          <div className="flex items-center space-x-2">
+                            <Shield className="h-4 w-4" />
+                            <span>{role.name}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Label htmlFor="project-select">Project (Optional)</Label>
+                  <Select value={selectedProjectId} onValueChange={setSelectedProjectId}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Global role (no project)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="global">Global Role</SelectItem>
+                      {projects?.map((project) => (
+                        <SelectItem key={project.id} value={project.id}>
+                          {project.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex justify-end space-x-2">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setIsAssignDialogOpen(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    onClick={handleAssignRole}
+                    disabled={!selectedUserId || !selectedRoleId || isAssigningRole}
+                  >
+                    {isAssigningRole ? "Assigning..." : "Assign Role"}
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+
+        {/* Current Assignments */}
+        <Card className="card-3d">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Users className="h-5 w-5" />
+              <span>Current Role Assignments</span>
+            </CardTitle>
+            <CardDescription>
+              Active role assignments across the system
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {userRolesExpanded?.map((userRole) => (
+                <div 
+                  key={userRole.id}
+                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-accent/5 transition-colors"
+                >
+                  <div className="flex items-center space-x-3">
+                    <Avatar>
+                      <AvatarFallback>
+                        {(userRole.profile as any)?.first_name?.[0]}
+                        {(userRole.profile as any)?.last_name?.[0]}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <p className="font-medium">
+                        {(userRole.profile as any)?.first_name} {(userRole.profile as any)?.last_name}
+                      </p>
+                      <p className="text-sm text-muted-foreground">
+                        {(userRole.profile as any)?.email}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Badge variant="secondary">
+                      {(userRole.role as any)?.name}
+                    </Badge>
+                    {userRole.project && (
+                      <Badge variant="outline">
+                        {(userRole.project as any)?.name}
+                      </Badge>
+                    )}
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeRole(userRole.id)}
+                      disabled={isRemovingRole}
+                      className="text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+              
+              {(!userRolesExpanded || userRolesExpanded.length === 0) && (
+                <div className="text-center py-8 text-muted-foreground">
+                  <Users className="h-12 w-12 mx-auto mb-4 opacity-20" />
+                  <p>No role assignments found</p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </RoleGuard>
+  );
+};
