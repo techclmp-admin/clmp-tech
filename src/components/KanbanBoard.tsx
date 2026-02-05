@@ -125,8 +125,9 @@ function TaskCard({ task, isDragging, onTaskClick }: TaskCardProps) {
     <Card
       ref={setNodeRef}
       style={style}
-      className="cursor-pointer hover:shadow-md transition-shadow mb-3"
+      className="cursor-grab hover:shadow-md transition-shadow mb-3 active:cursor-grabbing"
       {...attributes}
+      {...listeners}
       onClick={() => onTaskClick(task)}
     >
       <CardHeader className="pb-2">
@@ -134,11 +135,7 @@ function TaskCard({ task, isDragging, onTaskClick }: TaskCardProps) {
           <CardTitle className="text-sm font-medium line-clamp-2">
             {task.title}
           </CardTitle>
-          <div
-            {...listeners}
-            className="cursor-grab p-1 hover:bg-muted rounded opacity-50 hover:opacity-100"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="p-1 hover:bg-muted rounded opacity-50 hover:opacity-100">
             <GripVertical className="h-3 w-3" />
           </div>
         </div>
