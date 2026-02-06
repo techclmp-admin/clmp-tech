@@ -7,29 +7,24 @@ const corsHeaders = {
 };
 
 // Product and price definitions
+// Prices are in cents (CAD)
+// Standard: $400 CAD/month, $3,840 CAD/year (20% discount)
+// Enterprise: $1,200 CAD/month, $11,520 CAD/year (20% discount)
 const PRODUCTS = [
   {
-    name: "Basic Plan",
-    description: "Perfect for small construction projects",
+    name: "Standard Plan",
+    description: "For growing construction teams",
     prices: [
-      { id: "basic_monthly", amount: 4900, interval: "month" as const },
-      { id: "basic_yearly", amount: 47000, interval: "year" as const },
-    ],
-  },
-  {
-    name: "Professional Plan",
-    description: "Ideal for growing construction companies",
-    prices: [
-      { id: "professional_monthly", amount: 4900, interval: "month" as const },
-      { id: "professional_yearly", amount: 47000, interval: "year" as const },
+      { id: "standard_monthly", amount: 40000, interval: "month" as const },
+      { id: "standard_yearly", amount: 384000, interval: "year" as const },
     ],
   },
   {
     name: "Enterprise Plan",
     description: "For large construction enterprises",
     prices: [
-      { id: "enterprise_monthly", amount: 19900, interval: "month" as const },
-      { id: "enterprise_yearly", amount: 191000, interval: "year" as const },
+      { id: "enterprise_monthly", amount: 120000, interval: "month" as const },
+      { id: "enterprise_yearly", amount: 1152000, interval: "year" as const },
     ],
   },
 ];

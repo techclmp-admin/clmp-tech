@@ -26,6 +26,7 @@ const plans = [
     name: 'Free',
     icon: Sparkles,
     price: 0,
+    priceLabel: '/month',
     description: 'Perfect for getting started',
     maxProjects: 1,
     maxUsers: 5,
@@ -40,42 +41,44 @@ const plans = [
     ],
   },
   {
-    id: 'professional',
-    name: 'Professional',
+    id: 'standard',
+    name: 'Standard',
     icon: Building2,
-    price: 49,
-    description: 'For growing teams',
+    price: 400,
+    priceLabel: '/month/project',
+    description: 'For growing construction teams',
     maxProjects: 10,
     maxUsers: 25,
     popular: true,
     features: [
-      { name: '10 Active Projects', included: true },
-      { name: 'Up to 25 Team Members', included: true },
-      { name: 'Advanced Task Management', included: true },
-      { name: 'Priority Email Support', included: true },
-      { name: 'Advanced Analytics', included: true },
-      { name: 'Custom Reports', included: true },
-      { name: 'API Access', included: false },
+      { name: 'Project scheduling & task management', included: true },
+      { name: 'Cost tracking, budgets & expenses', included: true },
+      { name: 'Invoicing & document management', included: true },
+      { name: 'Subcontractor communication', included: true },
+      { name: 'QuickBooks & Sage 50 integration', included: true },
+      { name: 'MS Project import/export', included: true },
+      { name: 'Standard analytics & reports', included: true },
+      { name: 'Email support', included: true },
     ],
   },
   {
     id: 'enterprise',
     name: 'Enterprise',
     icon: Crown,
-    price: 199,
+    price: 1200,
+    priceLabel: '/month/project',
     description: 'For large organizations',
     maxProjects: 20,
     maxUsers: 100,
     features: [
-      { name: '20 Projects', included: true },
-      { name: '100 Team Members', included: true },
-      { name: 'Advanced Task Management', included: true },
-      { name: '24/7 Priority Support', included: true },
-      { name: 'Advanced Analytics', included: true },
-      { name: 'Custom Reports', included: true },
-      { name: 'API Access', included: true },
-      { name: 'Custom Integrations', included: true },
-      { name: 'Dedicated Account Manager', included: true },
+      { name: 'All Standard features included', included: true },
+      { name: 'Multi-project dashboards', included: true },
+      { name: 'Advanced analytics & forecasting', included: true },
+      { name: 'Team-level roles & permissions', included: true },
+      { name: 'Compliance-ready reporting', included: true },
+      { name: 'API access', included: true },
+      { name: 'Priority support (SLA)', included: true },
+      { name: 'Dedicated account manager', included: true },
     ],
   },
 ];
@@ -263,13 +266,13 @@ export function SubscriptionUpgradeModal({
                     {appliedPromo && plan.price > 0 ? (
                       <div className="space-y-1">
                         <div className="text-sm text-muted-foreground line-through">
-                          ${plan.price}/month
+                          ${plan.price}{plan.priceLabel}
                         </div>
                         <div>
                           <span className="text-4xl font-bold text-primary">
                             ${calculateDiscountedPrice(plan.price).toFixed(2)}
                           </span>
-                          <span className="text-muted-foreground">/month</span>
+                          <span className="text-muted-foreground">{plan.priceLabel}</span>
                         </div>
                         <Badge variant="secondary" className="text-xs">
                           Save ${(plan.price - calculateDiscountedPrice(plan.price)).toFixed(2)}
@@ -278,7 +281,7 @@ export function SubscriptionUpgradeModal({
                     ) : (
                       <>
                         <span className="text-4xl font-bold">${plan.price}</span>
-                        <span className="text-muted-foreground">/month</span>
+                        <span className="text-muted-foreground">{plan.priceLabel}</span>
                       </>
                     )}
                   </div>

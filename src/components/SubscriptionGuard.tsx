@@ -91,7 +91,7 @@ export function SubscriptionGuard({ children }: SubscriptionGuardProps) {
                     : `${limits.trial_days_left} day${limits.trial_days_left !== 1 ? 's' : ''} left in your trial`}
                 </p>
                 <p className="text-xs text-muted-foreground">
-                  Choose Professional or Enterprise to continue
+                  Choose Standard or Enterprise to continue
                 </p>
               </div>
             </div>

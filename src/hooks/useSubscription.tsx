@@ -87,7 +87,7 @@ export const useSubscription = () => {
       // Define limits based on plan
       const planLimits: Record<string, { maxProjects: number; maxUsers: number }> = {
         trial: { maxProjects: 3, maxUsers: 10 },
-        professional: { maxProjects: 10, maxUsers: 25 },
+        standard: { maxProjects: 10, maxUsers: 25 },
         enterprise: { maxProjects: 20, maxUsers: 100 }
       };
 
@@ -163,22 +163,22 @@ export const useSubscription = () => {
     try {
       const plans = [
         {
-          id: "professional",
-          name: "Professional",
+          id: "standard",
+          name: "Standard",
           description: "For growing construction teams",
-          price_cad: 49.00,
+          price_cad: 400.00,
           max_projects: 10,
           max_users: 25,
-          features: ["10 Active Projects", "Up to 25 Team Members", "Advanced Task Management", "Priority Email Support", "Advanced Analytics", "Custom Reports"]
+          features: ["Project scheduling & task management", "Cost tracking, budgets & expenses", "Invoicing & document management", "Subcontractor communication", "QuickBooks & Sage 50 integration", "MS Project import/export", "Standard analytics & reports", "Email support"]
         },
         {
           id: "enterprise",
           name: "Enterprise",
           description: "For large organizations",
-          price_cad: 199.00,
+          price_cad: 1200.00,
           max_projects: 20,
           max_users: 100,
-          features: ["20 Projects", "100 Team Members", "All Professional Features", "24/7 Priority Support", "API Access", "Dedicated Account Manager"]
+          features: ["All Standard features", "Multi-project dashboards", "Advanced analytics & forecasting", "Team-level roles & permissions", "Compliance-ready reporting", "API access", "Priority support (SLA)", "Dedicated account manager"]
         }
       ];
       setPlans(plans);
