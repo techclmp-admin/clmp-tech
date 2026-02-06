@@ -343,13 +343,12 @@ export default function Budget() {
 
       if (budgetsError) throw budgetsError;
 
-      // Fetch budgets table data
-      const { data: budgetData, error: budgetError } = await supabase
-        .from('budgets')
-        .select('project_id, budgeted_amount, spent_amount, remaining_amount, created_at')
-        .in('project_id', projectIds);
-
-      if (budgetError) throw budgetError;
+      // BUG 10 FIX: Commented out - 'budgets' table does not exist, causing query failure
+      // const { data: budgetsData, error: budgetsTableError } = await supabase
+      //   .from('budgets')
+      //   .select('*')
+      //   .in('project_id', projectIds);
+      // if (budgetsTableError) throw budgetsTableError;
 
       // Calculate total from projects.budget (main budget for each project)
       const totalFromProjects = projects?.reduce((sum, p) => sum + (Number(p.budget) || 0), 0) || 0;
@@ -422,12 +421,12 @@ export default function Budget() {
 
       if (budgetError) throw budgetError;
 
-      const { data: budgets, error: budgetsError } = await supabase
-        .from('budgets')
-        .select('project_id, budgeted_amount, spent_amount')
-        .in('project_id', projectIds);
-
-      if (budgetsError) throw budgetsError;
+      // BUG 10 FIX: Commented out - 'budgets' table does not exist, causing query failure
+      // const { data: budgetsData2, error: budgetsTableError2 } = await supabase
+      //   .from('budgets')
+      //   .select('*')
+      //   .in('project_id', projectIds);
+      // if (budgetsTableError2) throw budgetsTableError2;
 
       // Also fetch expenses for these projects
       const { data: expensesData, error: expensesError } = await supabase

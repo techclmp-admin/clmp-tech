@@ -155,8 +155,8 @@ const SubscriptionManager = () => {
         <h2 className="text-2xl font-bold mb-6">Subscription Plans</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {plans.map((plan) => (
-            <Card key={plan.id} className={`relative ${plan.name === 'Professional' ? 'border-primary' : ''}`}>
-              {plan.name === 'Professional' && (
+            <Card key={plan.id} className={`relative ${plan.name === 'Standard' ? 'border-primary' : ''}`}>
+              {plan.name === 'Standard' && (
                 <div className="absolute top-4 right-4 bg-primary text-primary-foreground text-xs font-semibold px-2 py-1 rounded-full">
                   POPULAR
                 </div>
@@ -166,7 +166,7 @@ const SubscriptionManager = () => {
                 <div className="text-3xl font-bold">
                   ${plan.price_cad.toFixed(0)} CAD
                   <span className="text-base font-normal text-muted-foreground">
-                    /month {plan.max_projects > 1 ? '' : '/project'}
+                    /month/project
                   </span>
                 </div>
                 <p className="text-muted-foreground">{plan.description}</p>

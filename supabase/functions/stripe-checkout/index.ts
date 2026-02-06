@@ -10,12 +10,8 @@ const corsHeaders = {
 // Plan configuration - mode determines subscription vs one-time
 const PLAN_CONFIG: Record<string, { mode: "subscription" | "payment" }> = {
   // Subscription plans
-  basic_monthly: { mode: "subscription" },
-  basic_yearly: { mode: "subscription" },
-  professional_monthly: { mode: "subscription" },
-  professional_yearly: { mode: "subscription" },
-  business_monthly: { mode: "subscription" },
-  business_yearly: { mode: "subscription" },
+  standard_monthly: { mode: "subscription" },
+  standard_yearly: { mode: "subscription" },
   enterprise_monthly: { mode: "subscription" },
   enterprise_yearly: { mode: "subscription" },
   // One-time add-ons

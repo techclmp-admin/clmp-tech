@@ -14,7 +14,7 @@ const PricingSection = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleStartTrial = async (planName: 'professional' | 'enterprise') => {
+  const handleStartTrial = async (planName: 'standard' | 'enterprise') => {
     if (!user) {
       navigate('/auth');
       return;
@@ -48,8 +48,8 @@ const PricingSection = () => {
     if (!user) {
       return (
         <Button 
-          variant={planId === 'professional' ? 'default' : 'outline'} 
-          className={planId === 'professional' ? 'w-full bg-primary hover:bg-primary/90 mt-6' : 'w-full bg-gradient-to-r from-secondary to-accent hover:opacity-90 mt-6'}
+          variant={planId === 'standard' ? 'default' : 'outline'}
+          className={planId === 'standard' ? 'w-full bg-primary hover:bg-primary/90 mt-6' : 'w-full bg-gradient-to-r from-secondary to-accent hover:opacity-90 mt-6'}
           onClick={() => navigate('/auth')}
         >
           Start 30-Day Free Trial
@@ -57,7 +57,7 @@ const PricingSection = () => {
       );
     }
 
-    const currentPlan = limits?.plan_name?.toLowerCase() || 'professional';
+    const currentPlan = limits?.plan_name?.toLowerCase() || 'standard';
     const isCurrentPlan = currentPlan === planId;
     const isTrialing = limits?.trial_end_date && new Date(limits.trial_end_date) > new Date();
 
@@ -73,8 +73,8 @@ const PricingSection = () => {
     if (limits?.status === 'pending') {
       return (
         <Button 
-          className={planId === 'professional' ? 'w-full bg-primary hover:bg-primary/90 mt-6' : 'w-full bg-gradient-to-r from-secondary to-accent hover:opacity-90 mt-6'}
-          onClick={() => handleStartTrial(planId as 'professional' | 'enterprise')}
+          className={planId === 'standard' ? 'w-full bg-primary hover:bg-primary/90 mt-6' : 'w-full bg-gradient-to-r from-secondary to-accent hover:opacity-90 mt-6'}
+          onClick={() => handleStartTrial(planId as 'standard' | 'enterprise')}
         >
           Start 30-Day Free Trial
         </Button>
@@ -105,45 +105,53 @@ const PricingSection = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto mb-16">
-          {/* Professional Plan */}
+          {/* Standard Plan */}
           <Card className="border-2 border-primary relative overflow-hidden">
             <div className="absolute top-0 left-0 right-0 h-1 bg-primary"></div>
             <Badge className="absolute top-4 right-4 bg-primary text-primary-foreground">
               MOST POPULAR
             </Badge>
             <CardHeader className="text-center pb-4">
-              <CardTitle className="text-2xl font-bold text-foreground mb-2">Professional</CardTitle>
-              <div className="text-4xl font-bold text-primary mb-2">$49 CAD</div>
-              <p className="text-muted-foreground">per month</p>
+              <CardTitle className="text-2xl font-bold text-foreground mb-2">Standard</CardTitle>
+              <div className="text-4xl font-bold text-primary mb-2">$400 CAD</div>
+              <p className="text-muted-foreground">per month / per project</p>
             </CardHeader>
             <CardContent className="space-y-4">
               <ul className="space-y-3">
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span className="text-foreground">10 active projects</span>
+                  <span className="text-foreground">Project scheduling & task management</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span className="text-foreground">Up to 25 team members</span>
+                  <span className="text-foreground">Cost tracking, budgets & expenses</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span className="text-foreground">Advanced task management</span>
+                  <span className="text-foreground">Invoicing & document management</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span className="text-foreground">Priority email support</span>
+                  <span className="text-foreground">Subcontractor communication</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span className="text-foreground">Advanced analytics</span>
+                  <span className="text-foreground">QuickBooks & Sage 50 integration</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span className="text-foreground">Custom reports</span>
+                  <span className="text-foreground">MS Project import/export</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <Check className="h-5 w-5 text-primary flex-shrink-0" />
+                  <span className="text-foreground">Standard analytics & reports</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <Check className="h-5 w-5 text-primary flex-shrink-0" />
+                  <span className="text-foreground">Email support</span>
                 </li>
               </ul>
-              {getButtonForPlan('professional')}
+              {getButtonForPlan('standard')}
             </CardContent>
           </Card>
 
@@ -152,30 +160,38 @@ const PricingSection = () => {
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-secondary to-accent"></div>
             <CardHeader className="text-center pb-4">
               <CardTitle className="text-2xl font-bold text-foreground mb-2">Enterprise</CardTitle>
-              <div className="text-4xl font-bold text-secondary mb-2">$199 CAD</div>
-              <p className="text-muted-foreground">per month</p>
+              <div className="text-4xl font-bold text-secondary mb-2">$1,200 CAD</div>
+              <p className="text-muted-foreground">per month / per project</p>
             </CardHeader>
             <CardContent className="space-y-4">
               <ul className="space-y-3">
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-secondary flex-shrink-0" />
-                  <span className="text-foreground">20 projects</span>
+                  <span className="text-foreground">All Standard features included</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-secondary flex-shrink-0" />
-                  <span className="text-foreground">100 team members</span>
+                  <span className="text-foreground">Multi-project dashboards</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-secondary flex-shrink-0" />
-                  <span className="text-foreground">All Professional features</span>
+                  <span className="text-foreground">Advanced analytics & forecasting</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-secondary flex-shrink-0" />
-                  <span className="text-foreground">24/7 priority support</span>
+                  <span className="text-foreground">Team-level roles & permissions</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <Check className="h-5 w-5 text-secondary flex-shrink-0" />
+                  <span className="text-foreground">Compliance-ready reporting</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-secondary flex-shrink-0" />
                   <span className="text-foreground">API access</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <Check className="h-5 w-5 text-secondary flex-shrink-0" />
+                  <span className="text-foreground">Priority support (SLA)</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-secondary flex-shrink-0" />

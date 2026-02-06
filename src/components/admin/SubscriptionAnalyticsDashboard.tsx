@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 import { useUserRole } from '@/hooks/useUserRole';
 
 const COLORS = {
-  professional: '#0ea5e9',
+  standard: '#0ea5e9',
   enterprise: '#f59e0b',
   trial: '#8b5cf6',
   churn: '#ef4444',
@@ -64,8 +64,8 @@ export function SubscriptionAnalyticsDashboard() {
       if (historyError) throw historyError;
 
       // Calculate MRR (Monthly Recurring Revenue)
-      const activeProfessional = filteredProfiles.filter(
-        p => p.subscription_plan === 'professional' && 
+      const activeStandard = filteredProfiles.filter(
+        p => p.subscription_plan === 'standard' &&
         p.subscription_status === 'active' &&
         (!p.trial_end_date || new Date(p.trial_end_date) < new Date())
       ).length || 0;
@@ -76,7 +76,7 @@ export function SubscriptionAnalyticsDashboard() {
         (!p.trial_end_date || new Date(p.trial_end_date) < new Date())
       ).length || 0;
 
-      const mrr = (activeProfessional * 49) + (activeEnterprise * 199);
+      const mrr = (activeStandard * 400) + (activeEnterprise * 1200);
 
       // Calculate trial conversion rate
       const trialStarted = filteredProfiles.filter(p => p.trial_start_date).length || 0;
@@ -89,13 +89,13 @@ export function SubscriptionAnalyticsDashboard() {
 
       // Calculate churn rate
       const cancelled = filteredProfiles.filter(p => p.subscription_status === 'cancelled').length || 0;
-      const totalPaid = activeProfessional + activeEnterprise + cancelled;
+      const totalPaid = activeStandard + activeEnterprise + cancelled;
       const churnRate = totalPaid > 0 ? (cancelled / totalPaid) * 100 : 0;
 
       // Revenue by plan
       const revenueByPlan = [
-        { name: 'Professional', value: activeProfessional * 49, count: activeProfessional },
-        { name: 'Enterprise', value: activeEnterprise * 199, count: activeEnterprise },
+        { name: 'Standard', value: activeStandard * 400, count: activeStandard },
+        { name: 'Enterprise', value: activeEnterprise * 1200, count: activeEnterprise },
       ];
 
       // Growth over time (monthly)
@@ -137,7 +137,7 @@ export function SubscriptionAnalyticsDashboard() {
         growthData,
         funnelData,
         totalUsers: filteredProfiles.length,
-        activeSubscriptions: activeProfessional + activeEnterprise,
+        activeSubscriptions: activeStandard + activeEnterprise,
         trialingUsers: trialing,
       };
     },
@@ -306,7 +306,7 @@ export function SubscriptionAnalyticsDashboard() {
                   dataKey="value"
                 >
                   {analytics?.revenueByPlan.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={index === 0 ? COLORS.professional : COLORS.enterprise} />
+                    <Cell key={`cell-${index}`} fill={index === 0 ? COLORS.standard : COLORS.enterprise} />
                   ))}
                 </Pie>
                 <Tooltip formatter={(value: any) => `$${value} CAD`} />
@@ -351,7 +351,7 @@ export function SubscriptionAnalyticsDashboard() {
                 <Line 
                   type="monotone" 
                   dataKey="users" 
-                  stroke={COLORS.professional} 
+                  stroke={COLORS.standard}
                   strokeWidth={2}
                   name="Total Users"
                 />
