@@ -184,15 +184,10 @@ const SubscriptionManager = () => {
                 <p className="text-muted-foreground">{plan.description}</p>
               </CardHeader>
               <CardContent className="space-y-4">
+                {plan.includes_header && (
+                  <p className="text-sm font-semibold text-foreground">{plan.includes_header}</p>
+                )}
                 <div className="space-y-2">
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-primary" />
-                    <span>Up to {plan.max_projects} active project{plan.max_projects > 1 ? 's' : ''}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Check className="h-4 w-4 text-primary" />
-                    <span>{plan.max_users} team members included</span>
-                  </div>
                   {plan.features.map((feature, index) => (
                     <div key={index} className="flex items-center space-x-2">
                       <Check className="h-4 w-4 text-primary" />
