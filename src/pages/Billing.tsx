@@ -5,20 +5,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, CheckCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { useQueryClient } from "@tanstack/react-query";
 
 const Billing = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [verifying, setVerifying] = useState(false);
   const [verified, setVerified] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
   const { toast } = useToast();
-  const queryClient = useQueryClient();
 
   const success = searchParams.get("success") === "true";
   const canceled = searchParams.get("canceled") === "true";
 
   useEffect(() => {
-    // If success=true, verify and sync the subscription from Stripe
     if (success && !verifying && !verified) {
       const verifySession = async () => {
         setVerifying(true);
@@ -33,12 +31,9 @@ const Billing = () => {
               title: "Subscription Activated!",
               description: `Your ${response.data.plan} plan is now active.`,
             });
-            // Invalidate subscription queries to refresh the UI
-            queryClient.invalidateQueries({ queryKey: ['subscription'] });
-            queryClient.invalidateQueries({ queryKey: ['profile'] });
+            setRefreshKey(prev => prev + 1);
           }
           
-          // Clear query params after processing
           setSearchParams({});
         } catch (error) {
           console.error("Session verification error:", error);
@@ -49,7 +44,7 @@ const Billing = () => {
 
       verifySession();
     }
-  }, [success, verifying, verified, toast, queryClient, setSearchParams]);
+  }, [success, verifying, verified, toast, setSearchParams]);
 
   useEffect(() => {
     if (canceled) {
@@ -96,7 +91,7 @@ const Billing = () => {
           </Card>
         )}
         
-        <SubscriptionManager />
+        <SubscriptionManager key={refreshKey} />
       </div>
     </div>
   );
