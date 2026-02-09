@@ -26,6 +26,7 @@ interface SubscriptionPlan {
   price_cad: number;
   price_prefix?: string;
   price_note?: string;
+  includes_header?: string;
   max_projects: number;
   max_users: number;
   features: string[];
@@ -184,6 +185,7 @@ export const useSubscription = () => {
           description: "For small to mid-sized construction firms managing individual projects",
           price_cad: 400.00,
           price_note: "25% early-adopter discount for the first 12 months",
+          includes_header: "Includes:",
           max_projects: 10,
           max_users: 25,
           features: ["Project scheduling and task management", "Cost tracking, budgets, and expenses", "Invoicing and document management", "Subcontractor communication and coordination", "QuickBooks and Sage 50 integration", "MS Project import and export", "Standard analytics and operational reports", "Email support"]
@@ -195,9 +197,10 @@ export const useSubscription = () => {
           price_cad: 1200.00,
           price_prefix: "Starting at",
           price_note: "Annual agreement recommended",
+          includes_header: "Includes everything in Standard, plus:",
           max_projects: 20,
           max_users: 100,
-          features: ["All Standard features included", "Multi-project and portfolio dashboards", "Advanced analytics, forecasting, and insights", "Team-level roles, permissions, and access controls", "Compliance-ready reporting for audits and regulatory requirements", "API access for custom integrations", "Priority support with SLA", "Dedicated account manager"]
+          features: ["Multi-project and portfolio dashboards", "Advanced analytics, forecasting, and insights", "Team-level roles, permissions, and access controls", "Compliance-ready reporting for audits and regulatory requirements", "API access for custom integrations", "Priority support with SLA", "Dedicated account manager"]
         }
       ];
       setPlans(plans);
