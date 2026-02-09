@@ -46,18 +46,20 @@ const plans = [
     icon: Building2,
     price: 400,
     priceLabel: '/month/project',
-    description: 'For growing construction teams',
+    pricePrefix: '',
+    priceNote: '25% early-adopter discount for the first 12 months',
+    description: 'For small to mid-sized construction firms managing individual projects',
     maxProjects: 10,
     maxUsers: 25,
     popular: true,
     features: [
-      { name: 'Project scheduling & task management', included: true },
-      { name: 'Cost tracking, budgets & expenses', included: true },
-      { name: 'Invoicing & document management', included: true },
-      { name: 'Subcontractor communication', included: true },
-      { name: 'QuickBooks & Sage 50 integration', included: true },
-      { name: 'MS Project import/export', included: true },
-      { name: 'Standard analytics & reports', included: true },
+      { name: 'Project scheduling and task management', included: true },
+      { name: 'Cost tracking, budgets, and expenses', included: true },
+      { name: 'Invoicing and document management', included: true },
+      { name: 'Subcontractor communication and coordination', included: true },
+      { name: 'QuickBooks and Sage 50 integration', included: true },
+      { name: 'MS Project import and export', included: true },
+      { name: 'Standard analytics and operational reports', included: true },
       { name: 'Email support', included: true },
     ],
   },
@@ -67,17 +69,19 @@ const plans = [
     icon: Crown,
     price: 1200,
     priceLabel: '/month/project',
-    description: 'For large organizations',
+    pricePrefix: 'Starting at',
+    priceNote: 'Annual agreement recommended',
+    description: 'For large contractors and portfolio-level, multi-site operations',
     maxProjects: 20,
     maxUsers: 100,
     features: [
       { name: 'All Standard features included', included: true },
-      { name: 'Multi-project dashboards', included: true },
-      { name: 'Advanced analytics & forecasting', included: true },
-      { name: 'Team-level roles & permissions', included: true },
-      { name: 'Compliance-ready reporting', included: true },
-      { name: 'API access', included: true },
-      { name: 'Priority support (SLA)', included: true },
+      { name: 'Multi-project and portfolio dashboards', included: true },
+      { name: 'Advanced analytics, forecasting, and insights', included: true },
+      { name: 'Team-level roles, permissions, and access controls', included: true },
+      { name: 'Compliance-ready reporting for audits and regulatory requirements', included: true },
+      { name: 'API access for custom integrations', included: true },
+      { name: 'Priority support with SLA', included: true },
       { name: 'Dedicated account manager', included: true },
     ],
   },
@@ -266,7 +270,7 @@ export function SubscriptionUpgradeModal({
                     {appliedPromo && plan.price > 0 ? (
                       <div className="space-y-1">
                         <div className="text-sm text-muted-foreground line-through">
-                          ${plan.price}{plan.priceLabel}
+                          {plan.pricePrefix && `${plan.pricePrefix} `}${plan.price.toLocaleString()}{plan.priceLabel}
                         </div>
                         <div>
                           <span className="text-4xl font-bold text-primary">
@@ -280,9 +284,15 @@ export function SubscriptionUpgradeModal({
                       </div>
                     ) : (
                       <>
-                        <span className="text-4xl font-bold">${plan.price}</span>
+                        {plan.pricePrefix && (
+                          <span className="text-sm text-muted-foreground mr-1">{plan.pricePrefix}</span>
+                        )}
+                        <span className="text-4xl font-bold">${plan.price.toLocaleString()}</span>
                         <span className="text-muted-foreground">{plan.priceLabel}</span>
                       </>
+                    )}
+                    {plan.priceNote && (
+                      <p className="text-xs text-primary font-medium mt-1">{plan.priceNote}</p>
                     )}
                   </div>
                 </CardHeader>

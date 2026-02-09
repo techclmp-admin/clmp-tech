@@ -115,36 +115,41 @@ const PricingSection = () => {
               <CardTitle className="text-2xl font-bold text-foreground mb-2">Standard</CardTitle>
               <div className="text-4xl font-bold text-primary mb-2">$400 CAD</div>
               <p className="text-muted-foreground">per month / per project</p>
+              <p className="text-sm text-primary font-medium mt-2">25% early-adopter discount for the first 12 months</p>
             </CardHeader>
             <CardContent className="space-y-4">
+              <p className="text-muted-foreground text-sm">
+                For small to mid-sized construction firms managing individual projects
+              </p>
+              <p className="text-sm font-semibold text-foreground">Includes:</p>
               <ul className="space-y-3">
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span className="text-foreground">Project scheduling & task management</span>
+                  <span className="text-foreground">Project scheduling and task management</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span className="text-foreground">Cost tracking, budgets & expenses</span>
+                  <span className="text-foreground">Cost tracking, budgets, and expenses</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span className="text-foreground">Invoicing & document management</span>
+                  <span className="text-foreground">Invoicing and document management</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span className="text-foreground">Subcontractor communication</span>
+                  <span className="text-foreground">Subcontractor communication and coordination</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span className="text-foreground">QuickBooks & Sage 50 integration</span>
+                  <span className="text-foreground">QuickBooks and Sage 50 integration</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span className="text-foreground">MS Project import/export</span>
+                  <span className="text-foreground">MS Project import and export</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-primary flex-shrink-0" />
-                  <span className="text-foreground">Standard analytics & reports</span>
+                  <span className="text-foreground">Standard analytics and operational reports</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-primary flex-shrink-0" />
@@ -160,38 +165,39 @@ const PricingSection = () => {
             <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-secondary to-accent"></div>
             <CardHeader className="text-center pb-4">
               <CardTitle className="text-2xl font-bold text-foreground mb-2">Enterprise</CardTitle>
-              <div className="text-4xl font-bold text-secondary mb-2">$1,200 CAD</div>
+              <div className="text-4xl font-bold text-secondary mb-2">Starting at $1,200 CAD</div>
               <p className="text-muted-foreground">per month / per project</p>
+              <p className="text-sm text-secondary font-medium mt-2">Annual agreement recommended</p>
             </CardHeader>
             <CardContent className="space-y-4">
+              <p className="text-muted-foreground text-sm">
+                For large contractors and portfolio-level, multi-site operations
+              </p>
+              <p className="text-sm font-semibold text-foreground">Includes everything in Standard, plus:</p>
               <ul className="space-y-3">
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-secondary flex-shrink-0" />
-                  <span className="text-foreground">All Standard features included</span>
+                  <span className="text-foreground">Multi-project and portfolio dashboards</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-secondary flex-shrink-0" />
-                  <span className="text-foreground">Multi-project dashboards</span>
+                  <span className="text-foreground">Advanced analytics, forecasting, and insights</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-secondary flex-shrink-0" />
-                  <span className="text-foreground">Advanced analytics & forecasting</span>
+                  <span className="text-foreground">Team-level roles, permissions, and access controls</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-secondary flex-shrink-0" />
-                  <span className="text-foreground">Team-level roles & permissions</span>
+                  <span className="text-foreground">Compliance-ready reporting for audits and regulatory requirements</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-secondary flex-shrink-0" />
-                  <span className="text-foreground">Compliance-ready reporting</span>
+                  <span className="text-foreground">API access for custom integrations</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-secondary flex-shrink-0" />
-                  <span className="text-foreground">API access</span>
-                </li>
-                <li className="flex items-center space-x-2">
-                  <Check className="h-5 w-5 text-secondary flex-shrink-0" />
-                  <span className="text-foreground">Priority support (SLA)</span>
+                  <span className="text-foreground">Priority support with SLA</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <Check className="h-5 w-5 text-secondary flex-shrink-0" />

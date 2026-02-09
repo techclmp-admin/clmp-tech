@@ -141,9 +141,15 @@ const SubscriptionManager = () => {
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold">
-                  {limits.current_period_end ? new Date(limits.current_period_end).toLocaleDateString() : 'N/A'}
+                  {limits.current_period_end
+                    ? new Date(limits.current_period_end).toLocaleDateString()
+                    : limits.trial_end_date
+                      ? new Date(limits.trial_end_date).toLocaleDateString()
+                      : 'N/A'}
                 </div>
-                <div className="text-sm text-muted-foreground">Next Billing</div>
+                <div className="text-sm text-muted-foreground">
+                  {limits.trial_end_date && !limits.current_period_end ? 'Trial Ends' : 'Next Billing'}
+                </div>
               </div>
             </div>
           </CardContent>
@@ -164,11 +170,17 @@ const SubscriptionManager = () => {
               <CardHeader>
                 <CardTitle className="text-xl">{plan.name}</CardTitle>
                 <div className="text-3xl font-bold">
-                  ${plan.price_cad.toFixed(0)} CAD
+                  {plan.price_prefix && (
+                    <span className="text-base font-normal text-muted-foreground mr-1">{plan.price_prefix}</span>
+                  )}
+                  ${plan.price_cad.toLocaleString()} CAD
                   <span className="text-base font-normal text-muted-foreground">
                     /month/project
                   </span>
                 </div>
+                {plan.price_note && (
+                  <p className="text-sm text-primary font-medium">{plan.price_note}</p>
+                )}
                 <p className="text-muted-foreground">{plan.description}</p>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -219,14 +231,14 @@ const SubscriptionManager = () => {
       {!limits?.has_subscription && (
         <Card className="bg-gradient-to-r from-primary/5 to-secondary/5 border-primary/20">
           <CardContent className="text-center py-8">
-            <h3 className="text-2xl font-bold mb-2">Start Your 14-Day Free Trial</h3>
+            <h3 className="text-2xl font-bold mb-2">Start Your 30-Day Free Trial</h3>
             <p className="text-muted-foreground mb-6">
               No credit card required. Cancel anytime. Get full access to all features.
             </p>
             <Button 
               size="lg" 
               className="bg-gradient-to-r from-primary to-secondary"
-              onClick={() => handleSubscribe('professional', 'monthly')}
+              onClick={() => handleSubscribe('standard', 'monthly')}
             >
               Start Free Trial
             </Button>

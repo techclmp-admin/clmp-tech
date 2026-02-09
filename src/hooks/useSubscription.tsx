@@ -24,6 +24,8 @@ interface SubscriptionPlan {
   name: string;
   description: string;
   price_cad: number;
+  price_prefix?: string;
+  price_note?: string;
   max_projects: number;
   max_users: number;
   features: string[];
@@ -76,6 +78,18 @@ export const useSubscription = () => {
       const status = profile?.subscription_status || 'active';
       const trialEndDate = profile?.trial_end_date;
 
+      // Get current_period_end from subscriptions table if user has an active subscription
+      let currentPeriodEnd: string | null = null;
+      if (plan !== 'trial' && plan !== 'free') {
+        const { data: subscription } = await supabase
+          .from('subscriptions')
+          .select('current_period_end')
+          .eq('user_id', user.id)
+          .eq('status', 'active')
+          .maybeSingle();
+        currentPeriodEnd = subscription?.current_period_end || null;
+      }
+
       // Calculate trial days left
       let trialDaysLeft = 0;
       if (trialEndDate) {
@@ -86,6 +100,7 @@ export const useSubscription = () => {
 
       // Define limits based on plan
       const planLimits: Record<string, { maxProjects: number; maxUsers: number }> = {
+        free: { maxProjects: 1, maxUsers: 5 },
         trial: { maxProjects: 3, maxUsers: 10 },
         standard: { maxProjects: 10, maxUsers: 25 },
         enterprise: { maxProjects: 20, maxUsers: 100 }
@@ -134,6 +149,7 @@ export const useSubscription = () => {
         trial_end: trialEndDate || undefined,
         trial_end_date: trialEndDate || undefined,
         trial_days_left: trialDaysLeft,
+        current_period_end: currentPeriodEnd || undefined,
         is_pending: status === 'pending'
       };
       
@@ -165,20 +181,23 @@ export const useSubscription = () => {
         {
           id: "standard",
           name: "Standard",
-          description: "For growing construction teams",
+          description: "For small to mid-sized construction firms managing individual projects",
           price_cad: 400.00,
+          price_note: "25% early-adopter discount for the first 12 months",
           max_projects: 10,
           max_users: 25,
-          features: ["Project scheduling & task management", "Cost tracking, budgets & expenses", "Invoicing & document management", "Subcontractor communication", "QuickBooks & Sage 50 integration", "MS Project import/export", "Standard analytics & reports", "Email support"]
+          features: ["Project scheduling and task management", "Cost tracking, budgets, and expenses", "Invoicing and document management", "Subcontractor communication and coordination", "QuickBooks and Sage 50 integration", "MS Project import and export", "Standard analytics and operational reports", "Email support"]
         },
         {
           id: "enterprise",
           name: "Enterprise",
-          description: "For large organizations",
+          description: "For large contractors and portfolio-level, multi-site operations",
           price_cad: 1200.00,
+          price_prefix: "Starting at",
+          price_note: "Annual agreement recommended",
           max_projects: 20,
           max_users: 100,
-          features: ["All Standard features", "Multi-project dashboards", "Advanced analytics & forecasting", "Team-level roles & permissions", "Compliance-ready reporting", "API access", "Priority support (SLA)", "Dedicated account manager"]
+          features: ["All Standard features included", "Multi-project and portfolio dashboards", "Advanced analytics, forecasting, and insights", "Team-level roles, permissions, and access controls", "Compliance-ready reporting for audits and regulatory requirements", "API access for custom integrations", "Priority support with SLA", "Dedicated account manager"]
         }
       ];
       setPlans(plans);
@@ -199,31 +218,10 @@ export const useSubscription = () => {
       const mockAddons = [
         {
           id: "1",
-          name: "Extra User Seat",
-          description: "Add additional team members beyond the 5 included users",
-          price_cad: 20.00,
-          addon_type: "user_seat"
-        },
-        {
-          id: "2",
-          name: "AI Insight Reports",
-          description: "Advanced AI-powered insights for progress, risk, and cash flow optimization",
-          price_cad: 100.00,
-          addon_type: "ai_reports"
-        },
-        {
-          id: "3",
-          name: "Custom Branding & Domain",
-          description: "White-label solution with your company branding and custom domain",
-          price_cad: 50.00,
-          addon_type: "custom_branding"
-        },
-        {
-          id: "4",
-          name: "Priority Support",
-          description: "24-hour SLA with dedicated support channel",
-          price_cad: 100.00,
-          addon_type: "priority_support"
+          name: "Customization & Training",
+          description: "Custom onboarding, workflow setup, and team training tailored to your operations",
+          price_cad: 500.00,
+          addon_type: "customization_training"
         }
       ];
       setAddons(mockAddons);
@@ -279,10 +277,19 @@ export const useSubscription = () => {
 
     setupRealtime();
 
+    // Refetch when user switches back to this tab (e.g. after Stripe checkout in another tab)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        checkSubscriptionLimits();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
     return () => {
       if (channel) {
         supabase.removeChannel(channel);
       }
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, []);
 
