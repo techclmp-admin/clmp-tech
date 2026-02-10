@@ -50,14 +50,17 @@ export const DeleteAccountDialog = () => {
         body: { userId: user.id }
       });
 
-      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      if (error) {
+        const context = await error.context?.json?.().catch(() => null);
+        throw new Error(context?.error || error.message);
+      }
 
       toast({
         title: "Account Deleted",
         description: "Your account has been permanently deleted. We're sorry to see you go.",
       });
 
-      // Sign out after deletion
       await signOut();
     } catch (error: any) {
       console.error('Error deleting account:', error);
