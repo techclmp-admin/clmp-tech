@@ -13,6 +13,8 @@ const Navigation = () => {
     { href: "#features", label: "Features" },
     { href: "#pricing", label: "Pricing" },
     { href: "#comparison", label: "Compare" },
+    { href: "/privacy", label: "Privacy Policy" },
+    { href: "/terms", label: "Terms of Service" },
     { href: "#contact", label: "Contact" },
   ];
 
