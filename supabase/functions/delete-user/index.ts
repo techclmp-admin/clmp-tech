@@ -99,6 +99,40 @@ Deno.serve(async (req) => {
       );
     }
 
+    // Safeguard: prevent deleting the last admin/system_admin
+    const { data: targetRoles } = await supabaseAdmin
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .in('role', ['admin', 'system_admin']);
+
+    if (targetRoles && targetRoles.length > 0) {
+      // User being deleted has admin privileges — check if they're the last one
+      for (const { role } of targetRoles) {
+        const { count } = await supabaseAdmin
+          .from('user_roles')
+          .select('*', { count: 'exact', head: true })
+          .eq('role', role);
+
+        if (count !== null && count <= 1) {
+          console.warn(`Blocked deletion of last ${role}: ${userId}`);
+
+          await supabaseAdmin.from('audit_logs').insert({
+            user_id: user.id,
+            action: 'DELETE_USER_DENIED',
+            resource_type: 'user',
+            resource_id: userId,
+            details: { reason: `Cannot delete the last ${role}` }
+          });
+
+          return new Response(
+            JSON.stringify({ error: `Cannot delete this account because it is the last ${role === 'system_admin' ? 'System Admin' : 'Admin'}. Please assign the role to another user first.` }),
+            { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+      }
+    }
+
     console.log(`Starting deletion process for user: ${userId} by ${user.id}`);
 
     // Delete all user-related data first
