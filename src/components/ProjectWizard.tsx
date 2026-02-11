@@ -524,9 +524,9 @@ const ProjectWizard: React.FC<ProjectWizardProps> = ({ onClose }) => {
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 pb-24 md:pb-4">
       <div className="bg-background rounded-lg w-full max-w-5xl max-h-[85vh] md:max-h-[90vh] flex flex-col overflow-hidden">
-        <div className="p-6 border-b">
-          <h2 className="text-2xl font-semibold">Create New Project</h2>
-          <p className="text-muted-foreground">Follow these steps to set up your construction project</p>
+        <div className="p-4 md:p-6 border-b">
+          <h2 className="text-lg md:text-2xl font-semibold">Create New Project</h2>
+          <p className="text-xs md:text-sm text-muted-foreground">Follow these steps to set up your construction project</p>
         </div>
 
         {/* Step indicator */}
@@ -569,7 +569,7 @@ const ProjectWizard: React.FC<ProjectWizardProps> = ({ onClose }) => {
         </div>
 
         {/* Step content */}
-        <div className="p-6 overflow-y-auto flex-1">
+        <div className="p-4 md:p-6 overflow-y-auto flex-1">
           {/* Subscription limit warning */}
           {limits && !limits.can_create_project && (
             <Alert variant="destructive" className="mb-6">
@@ -592,39 +592,41 @@ const ProjectWizard: React.FC<ProjectWizardProps> = ({ onClose }) => {
         </div>
 
         {/* Navigation */}
-        <div className="p-6 border-t flex justify-between bg-background shrink-0">
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={onClose}>
-              Cancel
-            </Button>
-            {currentStep > 1 && (
-              <Button variant="outline" onClick={prevStep}>
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Previous
+        <div className="p-4 md:px-6 md:py-4 border-t bg-background shrink-0 space-y-2 md:space-y-0 md:flex md:items-center md:justify-between">
+          <div className="flex flex-col-reverse md:flex-row md:items-center md:justify-between w-full gap-2 md:gap-3">
+            <div className="flex items-center gap-2 w-full md:w-auto">
+              <Button variant="outline" size="sm" onClick={onClose} className="flex-1 md:flex-none md:h-10 md:px-4">
+                Cancel
               </Button>
-            )}
-          </div>
-          <div className="flex gap-3">
-            {currentStep === 3 && (
-              <Button variant="outline" onClick={nextStep} size="lg" className="text-base">
-                Skip Template
-              </Button>
-            )}
-            {currentStep < steps.length ? (
-              <Button onClick={nextStep} disabled={!canProceed()} size="lg" className="text-base">
-                {currentStep === 3 && formData.templateId ? 'Continue with Template' : 'Next'}
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-            ) : (
-              <Button 
-                onClick={createProject} 
-                disabled={!canProceed() || loading || (limits && !limits.can_create_project)} 
-                size="lg" 
-                className="text-base"
-              >
-                {loading ? "Creating..." : "Create Project"}
-              </Button>
-            )}
+              {currentStep > 1 && (
+                <Button variant="outline" size="sm" onClick={prevStep} className="flex-1 md:flex-none md:h-10 md:px-4">
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Previous
+                </Button>
+              )}
+            </div>
+            <div className="flex items-center gap-2 w-full md:w-auto md:gap-3">
+              {currentStep === 3 && (
+                <Button variant="ghost" size="sm" onClick={nextStep} className="flex-1 md:flex-none md:h-10 md:px-4 md:order-first">
+                  Skip Template
+                </Button>
+              )}
+              {currentStep < steps.length ? (
+                <Button size="sm" onClick={nextStep} disabled={!canProceed()} className="flex-1 md:flex-none md:h-10 md:px-4">
+                  {currentStep === 3 && formData.templateId ? 'Continue with Template' : 'Next'}
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              ) : (
+                <Button 
+                  size="sm"
+                  onClick={createProject} 
+                  disabled={!canProceed() || loading || (limits && !limits.can_create_project)}
+                  className="flex-1 md:flex-none md:h-10 md:px-4"
+                >
+                  {loading ? "Creating..." : "Create Project"}
+                </Button>
+              )}
+            </div>
           </div>
         </div>
       </div>
