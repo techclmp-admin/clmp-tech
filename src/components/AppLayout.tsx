@@ -22,12 +22,12 @@ const AppLayout = () => {
       <div className="hidden md:block">
         <Sidebar language={language} onLanguageChange={handleLanguageChange} />
       </div>
-      
+
       {/* Mobile Sidebar via Sheet */}
       <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
         <SheetContent side="left" className="w-72 p-0 md:hidden">
           <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
-          <Sidebar language={language} onLanguageChange={handleLanguageChange} />
+          <Sidebar language={language} onLanguageChange={handleLanguageChange} onNavigate={() => setMobileMenuOpen(false)} />
         </SheetContent>
       </Sheet>
 
@@ -52,9 +52,9 @@ const AppLayout = () => {
             <NotificationBell />
           </div>
         </header>
-        
+
         {/* Main Content - with bottom padding for mobile nav */}
-        <div className="flex-1 pb-24 md:pb-6 mobile-scroll">
+        <div className="flex-1 pb-28 md:pb-6 mobile-scroll">
           <div className="mx-auto w-full max-w-7xl px-0 md:px-6 py-0 md:py-6">
             <Outlet context={{ language }} />
           </div>

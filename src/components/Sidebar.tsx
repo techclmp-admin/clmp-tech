@@ -15,10 +15,12 @@ import NotificationBell from './NotificationBell';
 interface SidebarProps {
   language: string;
   onLanguageChange: (lang: string) => void;
+  onNavigate?: () => void;
 }
 const Sidebar = ({
   language,
-  onLanguageChange
+  onLanguageChange,
+  onNavigate
 }: SidebarProps) => {
   const location = useLocation();
   const {
@@ -30,10 +32,10 @@ const Sidebar = ({
 
   // Fetch real alerts count
   const [alertsCount, setAlertsCount] = React.useState<number>(0);
-  
+
   // Fetch unread chat messages count
   const [unreadChatCount, setUnreadChatCount] = React.useState<number>(0);
-  
+
   React.useEffect(() => {
     const fetchAlerts = async () => {
       try {
@@ -42,13 +44,13 @@ const Sidebar = ({
           .from('activity_feed')
           .select('*', { count: 'exact', head: true })
           .eq('is_read', false);
-        
+
         setAlertsCount(activityCount || 0);
       } catch (error) {
         console.error('Error fetching alerts count:', error);
       }
     };
-    
+
     fetchAlerts();
   }, []);
 
@@ -203,14 +205,15 @@ const Sidebar = ({
       color: 'bg-gradient-to-br from-blue-500 to-blue-600',
       menuKey: 'chat'
     },
-    {
-      name: t.alerts,
-      href: '/alerts',
-      icon: AlertTriangle,
-      badge: alertsCount > 0 ? alertsCount.toString() : null,
-      color: 'bg-gradient-to-br from-red-500 to-red-600',
-      menuKey: 'alerts'
-    },
+    // Temporarily removed - AI Risk Alerts
+    // {
+    //   name: t.alerts,
+    //   href: '/alerts',
+    //   icon: AlertTriangle,
+    //   badge: alertsCount > 0 ? alertsCount.toString() : null,
+    //   color: 'bg-gradient-to-br from-red-500 to-red-600',
+    //   menuKey: 'alerts'
+    // },
     // === FINANCE ===
     {
       name: t.budget,
@@ -245,13 +248,14 @@ const Sidebar = ({
       color: 'bg-gradient-to-br from-slate-500 to-slate-600',
       menuKey: 'compliance'
     },
-    {
-      name: t.cctv,
-      href: '/cctv',
-      icon: Video,
-      color: 'bg-gradient-to-br from-emerald-500 to-emerald-600',
-      menuKey: 'cctv'
-    }
+    // Temporarily removed - CCTV AI System
+    // {
+    //   name: t.cctv,
+    //   href: '/cctv',
+    //   icon: Video,
+    //   color: 'bg-gradient-to-br from-emerald-500 to-emerald-600',
+    //   menuKey: 'cctv'
+    // }
   ].filter(item => isMenuEnabled(item.menuKey) || isMenuUpcoming(item.menuKey));
 
   // Admin-only navigation
@@ -287,7 +291,7 @@ const Sidebar = ({
   return <div className="flex h-full w-64 flex-col shrink-0 glass border-r border-glass-border">
       {/* Logo & Notification Bell */}
       <div className="flex h-16 items-center justify-between px-6 border-b border-glass-border">
-        <Link to="/dashboard" className="flex items-center space-x-3">
+        <Link to="/dashboard" onClick={onNavigate} className="flex items-center space-x-3">
           <div className="icon-3d p-2">
             <img src={clmpLogo} alt="CLMP Tech inc - Advanced Management" className="h-8 w-auto" />
           </div>
@@ -329,14 +333,14 @@ const Sidebar = ({
         <nav className="p-4 space-y-3">
           {allNavigation.map(item => {
           const isActive = location.pathname === item.href;
-          
+
           // Check if menu should show "Soon" badge
           // Logic: Show "Soon" ONLY when menu is disabled (enabled=false) AND marked as upcoming
           const menuEnabled = isMenuEnabled(item.menuKey);
           const menuUpcoming = isMenuUpcoming(item.menuKey);
           let isUpcoming = !menuEnabled && menuUpcoming;
           let isDisabled = isUpcoming;
-          
+
           // Special handling for AI Risk Alerts menu - also check feature settings
           if (item.menuKey === 'alerts') {
             const featureEnabled = isFeatureEnabled('ai_risk_management');
@@ -347,7 +351,7 @@ const Sidebar = ({
               isDisabled = true;
             }
           }
-          
+
           // Special handling for Integrations menu
           if (item.menuKey === 'integrations') {
             const featureEnabled = isFeatureEnabled('integrations');
@@ -357,7 +361,7 @@ const Sidebar = ({
               isDisabled = true;
             }
           }
-          
+
           // Special handling for Chat menu
           if (item.menuKey === 'chat') {
             const featureEnabled = isFeatureEnabled('chat');
@@ -367,7 +371,7 @@ const Sidebar = ({
               isDisabled = true;
             }
           }
-          
+
           return <div key={item.name}>
               {isDisabled ? (
                 <div className={cn("group flex items-center space-x-3 p-3 rounded-xl transition-all duration-300 ease-out-expo opacity-60 cursor-not-allowed", "hover:bg-accent/5 hover:backdrop-blur-sm")}>
@@ -384,7 +388,7 @@ const Sidebar = ({
                   </Badge>
                 </div>
               ) : (
-                <Link to={item.href} className="block">
+                <Link to={item.href} onClick={onNavigate} className="block">
                   <div className={cn("group flex items-center space-x-3 p-3 rounded-xl transition-all duration-300 ease-out-expo", isActive ? "card-3d bg-primary/10 backdrop-blur-sm" : "hover:bg-accent/5 hover:backdrop-blur-sm")}>
                     <div className={cn("icon-3d flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-300", item.color, isActive ? "shadow-3d-hover scale-105" : "group-hover:scale-105")}>
                       <item.icon className="h-5 w-5 text-white" />
@@ -395,8 +399,8 @@ const Sidebar = ({
                       </p>
                     </div>
                     {item.badge && (
-                      <Badge 
-                        variant={(item as any).isDemo ? "secondary" : "destructive"} 
+                      <Badge
+                        variant={(item as any).isDemo ? "secondary" : "destructive"}
                         className={`ml-auto ${(item as any).isDemo ? 'bg-emerald-500 text-white' : 'shadow-3d'}`}
                       >
                         {item.badge}
@@ -412,19 +416,19 @@ const Sidebar = ({
         {/* Bottom Navigation */}
         <nav className="p-4 border-t border-glass-border space-y-3">
           {bottomNavigation.map(item => {
-          const isActive = location.pathname === item.href;
-          return <Link key={item.name} to={item.href} className="block">
-                <div className={cn("group flex items-center space-x-3 p-3 rounded-xl transition-all duration-300 ease-out-expo", isActive ? "card-3d bg-primary/10 backdrop-blur-sm" : "hover:bg-accent/5 hover:backdrop-blur-sm")}>
-                  <div className={cn("icon-3d flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-gray-500 to-gray-600 transition-all duration-300", isActive ? "shadow-3d-hover scale-105" : "group-hover:scale-105")}>
-                    <item.icon className="h-4 w-4 text-white" />
-                  </div>
-                  <span className={cn("text-sm font-medium transition-colors", isActive ? "text-primary" : "text-foreground group-hover:text-primary")}>
-                    {item.name}
-                  </span>
+            const isActive = location.pathname === item.href;
+            return <Link key={item.name} to={item.href} onClick={onNavigate} className="block">
+              <div className={cn("group flex items-center space-x-3 p-3 rounded-xl transition-all duration-300 ease-out-expo", isActive ? "card-3d bg-primary/10 backdrop-blur-sm" : "hover:bg-accent/5 hover:backdrop-blur-sm")}>
+                <div className={cn("icon-3d flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-gray-500 to-gray-600 transition-all duration-300", isActive ? "shadow-3d-hover scale-105" : "group-hover:scale-105")}>
+                  <item.icon className="h-4 w-4 text-white" />
                 </div>
-              </Link>;
-        })}
-          
+                <span className={cn("text-sm font-medium transition-colors", isActive ? "text-primary" : "text-foreground group-hover:text-primary")}>
+                  {item.name}
+                </span>
+              </div>
+            </Link>;
+          })}
+
           {/* Sign Out Button */}
           <div className="pt-3 border-t border-glass-border">
             <div onClick={handleSignOut} className="group flex items-center space-x-3 p-3 rounded-xl transition-all duration-300 ease-out-expo hover:bg-accent/5 hover:backdrop-blur-sm cursor-pointer">
