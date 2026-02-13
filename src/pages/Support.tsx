@@ -1042,7 +1042,7 @@ const UserManualSection = () => {
       icon: CreditCard,
       description: 'Manage your subscription and payment methods',
       steps: [
-        { title: 'Subscription Plans', content: 'Choose from Starter, Professional, or Enterprise plans. Each tier unlocks additional features and team members.' },
+        { title: 'Subscription Plans', content: 'Choose from Standard or Enterprise plans. Each tier unlocks additional features and team members.' },
         { title: 'Payment Methods', content: 'Add credit/debit cards for automatic billing. Enterprise customers can pay by invoice.' },
         { title: 'Billing History', content: 'View all past invoices and payment history in Settings > Billing. Download invoices for your records.' },
         { title: 'Upgrading/Downgrading', content: 'Change plans anytime. Upgrades take effect immediately. Downgrades apply at next billing cycle.' }

@@ -93,7 +93,7 @@ export const AdminBulkEmailManagement = () => {
     subject: "",
     description: "",
     html_content: getDefaultTemplate(),
-    recipientFilter: "all" as "all" | "professional" | "enterprise" | "trial" | "custom",
+    recipientFilter: "all" as "all" | "standard" | "enterprise" | "trial" | "custom",
     customEmails: "",
   });
 
@@ -618,7 +618,7 @@ export const AdminBulkEmailManagement = () => {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Users ({users.length})</SelectItem>
-                    <SelectItem value="professional">Professional Plan ({users.filter(u => u.subscription_plan === "professional").length})</SelectItem>
+                    <SelectItem value="standard">Standard Plan ({users.filter(u => u.subscription_plan === "standard").length})</SelectItem>
                     <SelectItem value="enterprise">Enterprise Plan ({users.filter(u => u.subscription_plan === "enterprise").length})</SelectItem>
                     <SelectItem value="trial">Trial Users ({users.filter(u => u.subscription_plan === "trial").length})</SelectItem>
                     <SelectItem value="custom">Custom Selection</SelectItem>
