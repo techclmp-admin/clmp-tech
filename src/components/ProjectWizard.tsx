@@ -522,7 +522,8 @@ const ProjectWizard: React.FC<ProjectWizardProps> = ({ onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 pb-24 md:pb-4">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[60] p-4">
+      <style>{`@media (max-width: 767px) { nav.fixed.bottom-0 { display: none !important; } }`}</style>
       <div className="bg-background rounded-lg w-full max-w-5xl max-h-[85vh] md:max-h-[90vh] flex flex-col overflow-hidden">
         <div className="p-4 md:p-6 border-b">
           <h2 className="text-lg md:text-2xl font-semibold">Create New Project</h2>
