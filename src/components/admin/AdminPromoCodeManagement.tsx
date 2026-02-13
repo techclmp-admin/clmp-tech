@@ -501,7 +501,7 @@ export function AdminPromoCodeManagement() {
             <div className="space-y-2">
               <Label>Applicable Plans</Label>
               <div className="flex gap-2 flex-wrap">
-                {['free', 'professional', 'enterprise'].map((plan) => (
+                {['free', 'standard', 'enterprise'].map((plan) => (
                   <Badge
                     key={plan}
                     variant={formData.applicable_plans.includes(plan) ? "default" : "outline"}

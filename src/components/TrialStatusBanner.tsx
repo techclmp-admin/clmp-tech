@@ -48,7 +48,7 @@ export function TrialStatusBanner() {
     return () => clearInterval(interval);
   }, [limits?.trial_end_date]);
 
-  // Handle direct upgrade to Professional plan
+  // Handle direct upgrade to Standard plan
   const handleUpgradeNow = async () => {
     setIsUpgrading(true);
     try {
@@ -65,7 +65,7 @@ export function TrialStatusBanner() {
 
       const response = await supabase.functions.invoke('stripe-checkout', {
         body: {
-          planId: 'professional_monthly',
+          planId: 'standard_monthly',
           successUrl: `${window.location.origin}/billing?success=true`,
           cancelUrl: `${window.location.origin}/billing?canceled=true`,
         },

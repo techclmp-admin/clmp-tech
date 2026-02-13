@@ -75,7 +75,7 @@ serve(async (req) => {
     console.log("Found active subscription:", subscription.id);
 
     // Determine plan name from price lookup_key or metadata
-    let planName = "professional";
+    let planName = "standard";
     if (subscription.items?.data?.[0]?.price?.lookup_key) {
       const lookupKey = subscription.items.data[0].price.lookup_key;
       planName = lookupKey.replace("price_", "").replace(/_monthly|_yearly/, "");

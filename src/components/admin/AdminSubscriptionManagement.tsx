@@ -88,7 +88,7 @@ export function AdminSubscriptionManagement() {
 
       const stats = {
         total: filteredData.length,
-        professional: filteredData.filter(u => u.subscription_plan === 'professional').length,
+        standard: filteredData.filter(u => u.subscription_plan === 'standard').length,
         enterprise: filteredData.filter(u => u.subscription_plan === 'enterprise').length,
         active: filteredData.filter(u => u.subscription_status === 'active').length,
         pending: filteredData.filter(u => u.subscription_status === 'pending').length,
@@ -259,7 +259,7 @@ export function AdminSubscriptionManagement() {
 
   const getPlanBadgeVariant = (plan: string) => {
     switch (plan) {
-      case 'professional':
+      case 'standard':
         return 'default';
       case 'enterprise':
         return 'default';
@@ -328,11 +328,11 @@ export function AdminSubscriptionManagement() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Professional</CardTitle>
+            <CardTitle className="text-sm font-medium">Standard</CardTitle>
             <Building2 className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-blue-600">{stats?.professional || 0}</div>
+            <div className="text-2xl font-bold text-blue-600">{stats?.standard || 0}</div>
           </CardContent>
         </Card>
 
@@ -384,7 +384,7 @@ export function AdminSubscriptionManagement() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Plans</SelectItem>
-                <SelectItem value="professional">Professional</SelectItem>
+                <SelectItem value="standard">Standard</SelectItem>
                 <SelectItem value="enterprise">Enterprise</SelectItem>
               </SelectContent>
             </Select>
@@ -464,7 +464,7 @@ export function AdminSubscriptionManagement() {
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-2">
                             {/* Extend Trial Button */}
-                            {(user.subscription_plan === 'professional' || user.subscription_plan === 'enterprise') && 
+                            {(user.subscription_plan === 'standard' || user.subscription_plan === 'enterprise') && 
                              user.trial_end_date && (
                               <Button
                                 variant="outline"
@@ -485,7 +485,7 @@ export function AdminSubscriptionManagement() {
                               </SelectTrigger>
                               <SelectContent>
                                 <SelectItem value="trial">Trial</SelectItem>
-                                <SelectItem value="professional">Professional</SelectItem>
+                                <SelectItem value="standard">Standard</SelectItem>
                                 <SelectItem value="enterprise">Enterprise</SelectItem>
                               </SelectContent>
                             </Select>
