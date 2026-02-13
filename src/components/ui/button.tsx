@@ -11,11 +11,11 @@ const buttonVariants = cva(
       variant: {
         default: "btn-gradient-primary text-primary-foreground hover:shadow-3d-hover",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-3d hover:shadow-3d-hover hover:-translate-y-0.5",
-        outline: "border border-input bg-card/50 backdrop-blur-sm hover:bg-accent hover:text-accent-foreground shadow-3d hover:shadow-3d-hover hover:-translate-y-0.5",
+        outline: "border border-input bg-card/50 backdrop-blur-sm hover:bg-accent/10 hover:text-foreground shadow-3d hover:shadow-3d-hover hover:-translate-y-0.5",
         secondary: "btn-gradient-secondary text-secondary-foreground hover:shadow-3d-hover",
-        ghost: "hover:bg-accent/10 hover:text-accent-foreground backdrop-blur-sm",
+        ghost: "hover:bg-accent/10 hover:text-foreground backdrop-blur-sm",
         link: "text-primary underline-offset-4 hover:underline",
-        glass: "glass hover:bg-accent/20 hover:text-accent-foreground",
+        glass: "glass hover:bg-accent/20 hover:text-foreground",
         icon3d: "icon-3d bg-gradient-primary p-3",
       },
       size: {
