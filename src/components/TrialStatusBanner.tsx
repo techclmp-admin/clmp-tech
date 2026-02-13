@@ -51,9 +51,12 @@ export function TrialStatusBanner() {
   // Handle direct upgrade to Standard plan
   const handleUpgradeNow = async () => {
     setIsUpgrading(true);
+    // Open window synchronously to preserve user gesture context (iOS Safari blocks async window.open)
+    const newWindow = window.open('', '_blank');
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
+        newWindow?.close();
         toast({
           title: "Authentication Required",
           description: "Please sign in to upgrade",
@@ -77,11 +80,16 @@ export function TrialStatusBanner() {
 
       const { url } = response.data;
       if (url) {
-        window.open(url, '_blank');
+        if (newWindow) {
+          newWindow.location.href = url;
+        } else {
+          window.location.href = url;
+        }
       } else {
         throw new Error('No checkout URL returned');
       }
     } catch (error: any) {
+      newWindow?.close();
       console.error('Upgrade error:', error);
       toast({
         title: "Error",

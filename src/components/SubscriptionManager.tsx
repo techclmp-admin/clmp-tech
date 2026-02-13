@@ -15,9 +15,12 @@ const SubscriptionManager = () => {
 
   const handleSubscribe = async (planId: string, interval: 'monthly' | 'yearly' = 'monthly') => {
     setProcessingPlan(planId);
+    // Open window synchronously to preserve user gesture context (iOS Safari blocks async window.open)
+    const newWindow = window.open('', '_blank');
     try {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
+        newWindow?.close();
         toast({
           title: "Authentication Required",
           description: "Please sign in to subscribe",
@@ -40,12 +43,17 @@ const SubscriptionManager = () => {
 
       const { url } = response.data;
       if (url) {
-        // Open in new tab to avoid iframe restrictions from Stripe
-        window.open(url, '_blank');
+        if (newWindow) {
+          newWindow.location.href = url;
+        } else {
+          // Fallback: if popup was still blocked, redirect current page
+          window.location.href = url;
+        }
       } else {
         throw new Error('No checkout URL returned');
       }
     } catch (error: any) {
+      newWindow?.close();
       console.error('Subscription error:', error);
       toast({
         title: "Error",
@@ -60,6 +68,8 @@ const SubscriptionManager = () => {
 
   const handleManageSubscription = async () => {
     setOpeningPortal(true);
+    // Open window synchronously to preserve user gesture context (iOS Safari blocks async window.open)
+    const newWindow = window.open('', '_blank');
     try {
       const response = await supabase.functions.invoke('stripe-portal', {
         body: {
@@ -73,10 +83,14 @@ const SubscriptionManager = () => {
 
       const { url } = response.data;
       if (url) {
-        // Open in new tab to avoid iframe restrictions from Stripe
-        window.open(url, '_blank');
+        if (newWindow) {
+          newWindow.location.href = url;
+        } else {
+          window.location.href = url;
+        }
       }
     } catch (error: any) {
+      newWindow?.close();
       console.error('Portal error:', error);
       toast({
         title: "Error",
