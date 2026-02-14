@@ -184,10 +184,26 @@ const Projects = () => {
       const { data, error } = await query;
       
       if (error) throw error;
+
+      const projectData = data || [];
+      const filteredProjectIds = projectData.map(project => project.id);
+
+      const { data: allocations, error: allocationsError } = await supabase
+        .from('project_budgets')
+        .select('project_id, budgeted_amount')
+        .in('project_id', filteredProjectIds);
+
+      if (allocationsError) throw allocationsError;
+
+      const additionalByProject = (allocations || []).reduce((acc, item) => {
+        acc[item.project_id] = (acc[item.project_id] || 0) + (Number(item.budgeted_amount) || 0);
+        return acc;
+      }, {} as Record<string, number>);
       
       // Attach current user's role and ownership to each project
-      return (data || []).map(project => ({
+      return projectData.map(project => ({
         ...project,
+        budget: (Number(project.budget) || 0) + (additionalByProject[project.id] || 0),
         currentUserRole: membershipData?.find(m => m.project_id === project.id)?.role,
         isOwner: project.created_by === user.id
       }));

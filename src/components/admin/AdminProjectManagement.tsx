@@ -34,7 +34,26 @@ export const AdminProjectManagement = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data;
+
+      const projects = data || [];
+      const projectIds = projects.map((project) => project.id);
+
+      const { data: allocations, error: allocationsError } = await supabase
+        .from('project_budgets')
+        .select('project_id, budgeted_amount')
+        .in('project_id', projectIds);
+
+      if (allocationsError) throw allocationsError;
+
+      const additionalByProject = (allocations || []).reduce((acc, item) => {
+        acc[item.project_id] = (acc[item.project_id] || 0) + (Number(item.budgeted_amount) || 0);
+        return acc;
+      }, {} as Record<string, number>);
+
+      return projects.map((project) => ({
+        ...project,
+        budget: (Number(project.budget) || 0) + (additionalByProject[project.id] || 0),
+      }));
     }
   });
 
