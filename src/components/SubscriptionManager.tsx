@@ -5,13 +5,27 @@ import { useToast } from "@/hooks/use-toast";
 import { useSubscription } from "@/hooks/useSubscription";
 import { Check, ExternalLink, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-const SubscriptionManager = () => {
-  const { limits, plans, loading } = useSubscription();
+interface SubscriptionManagerProps {
+  verifiedPlan?: string | null;
+}
+
+const SubscriptionManager = ({ verifiedPlan }: SubscriptionManagerProps = {}) => {
+  const { limits, plans, loading, refreshSubscriptionData } = useSubscription();
   const { toast } = useToast();
   const [processingPlan, setProcessingPlan] = useState<string | null>(null);
   const [openingPortal, setOpeningPortal] = useState(false);
+
+  // When a verified plan is passed after successful checkout, re-fetch subscription
+  // data with a delay to allow DB writes from the edge function to propagate
+  useEffect(() => {
+    if (!verifiedPlan) return;
+    const timer = setTimeout(() => {
+      refreshSubscriptionData();
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [verifiedPlan]);
 
   const handleSubscribe = async (planId: string, interval: 'monthly' | 'yearly' = 'monthly') => {
     setProcessingPlan(planId);

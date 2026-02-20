@@ -10,6 +10,7 @@ const Billing = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [verifying, setVerifying] = useState(false);
   const [verified, setVerified] = useState(false);
+  const [verifiedPlan, setVerifiedPlan] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const { toast } = useToast();
 
@@ -27,6 +28,7 @@ const Billing = () => {
             console.error("Verify error:", response.error);
           } else if (response.data?.success) {
             setVerified(true);
+            setVerifiedPlan(response.data.plan || null);
             toast({
               title: "Subscription Activated!",
               description: `Your ${response.data.plan} plan is now active.`,
@@ -91,7 +93,7 @@ const Billing = () => {
           </Card>
         )}
         
-        <SubscriptionManager key={refreshKey} />
+        <SubscriptionManager key={refreshKey} verifiedPlan={verifiedPlan} />
       </div>
     </div>
   );
