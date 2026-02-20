@@ -182,8 +182,13 @@ export default function Budget() {
       void queryClient.refetchQueries({ queryKey: ['recent-expenses'] });
       void queryClient.refetchQueries({ queryKey: ['spending-trends'] });
       void queryClient.refetchQueries({ queryKey: ['budget-forecast'] });
-      void queryClient.refetchQueries({ queryKey: ['projects-list'] });
+      void queryClient.refetchQueries({ queryKey: ['projects'] });
       void queryClient.refetchQueries({ queryKey: ['budget-income'] });
+      void queryClient.refetchQueries({ queryKey: ['dashboard-budget-stats'] });
+      void queryClient.refetchQueries({ queryKey: ['dashboard-income-stats'] });
+      void queryClient.refetchQueries({ queryKey: ['analytics-overview'] });
+      void queryClient.refetchQueries({ queryKey: ['project-metrics'] });
+      void queryClient.refetchQueries({ queryKey: ['reports-trends'] });
     };
 
     const channel = supabase
@@ -335,7 +340,7 @@ export default function Budget() {
         } as BudgetData;
       }
 
-      // Fetch actual budget data from project_budgets
+      // Fetch actual budget data from project_budgets (category allocations)
       const { data: projectBudgetsData, error: budgetsError } = await supabase
         .from('project_budgets')
         .select('project_id, budgeted_amount, actual_amount, created_at')
@@ -343,18 +348,15 @@ export default function Budget() {
 
       if (budgetsError) throw budgetsError;
 
-      // BUG 10 FIX: Commented out - 'budgets' table does not exist, causing query failure
-      // const { data: budgetsData, error: budgetsTableError } = await supabase
-      //   .from('budgets')
-      //   .select('*')
-      //   .in('project_id', projectIds);
-      // if (budgetsTableError) throw budgetsTableError;
-
       // Calculate total from projects.budget (main budget for each project)
       const totalFromProjects = projects?.reduce((sum, p) => sum + (Number(p.budget) || 0), 0) || 0;
       
-      // Use projects total as the primary budget source
-      const totalBudget = totalFromProjects;
+      // Calculate total from budget allocations (project_budgets table)
+      const totalFromAllocations = projectBudgetsData?.reduce((sum, b) => sum + (Number(b.budgeted_amount) || 0), 0) || 0;
+      
+      // Total Budget = base project budget + any additional allocations
+      // When user adds a budget allocation, it should increase the total
+      const totalBudget = totalFromProjects + totalFromAllocations;
       
       // Fetch actual expenses from the expenses table (primary source for spent)
       const { data: expensesData, error: expensesError } = await supabase
@@ -437,11 +439,14 @@ export default function Budget() {
       if (expensesError) throw expensesError;
 
       return projects?.map(project => {
+        const projectAllocations = budgetData?.filter(b => b.project_id === project.id) || [];
+        const additionalBudget = projectAllocations.reduce((sum, b) => sum + (Number(b.budgeted_amount) || 0), 0);
+
         // Get expenses for this project - this is the true source of spending
         const projectExpenses = expensesData?.filter(e => e.project_id === project.id) || [];
         const spent = projectExpenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
         
-        const budget = project.budget || 0;
+        const budget = (Number(project.budget) || 0) + additionalBudget;
         const remaining = budget - spent;
         const percentageUsed = budget > 0 ? (spent / budget) * 100 : 0;
 
@@ -1021,6 +1026,12 @@ export default function Budget() {
         queryClient.refetchQueries({ queryKey: ['budget-items'] }),
         queryClient.refetchQueries({ queryKey: ['spending-trends'] }),
         queryClient.refetchQueries({ queryKey: ['budget-forecast'] }),
+        queryClient.refetchQueries({ queryKey: ['projects'] }),
+        queryClient.refetchQueries({ queryKey: ['dashboard-budget-stats'] }),
+        queryClient.refetchQueries({ queryKey: ['dashboard-income-stats'] }),
+        queryClient.refetchQueries({ queryKey: ['analytics-overview'] }),
+        queryClient.refetchQueries({ queryKey: ['project-metrics'] }),
+        queryClient.refetchQueries({ queryKey: ['reports-trends'] }),
       ]);
     } catch (error: any) {
       toast({
@@ -1170,6 +1181,12 @@ export default function Budget() {
         queryClient.refetchQueries({ queryKey: ['budget-items'] }),
         queryClient.refetchQueries({ queryKey: ['spending-trends'] }),
         queryClient.refetchQueries({ queryKey: ['budget-forecast'] }),
+        queryClient.refetchQueries({ queryKey: ['projects'] }),
+        queryClient.refetchQueries({ queryKey: ['dashboard-budget-stats'] }),
+        queryClient.refetchQueries({ queryKey: ['dashboard-income-stats'] }),
+        queryClient.refetchQueries({ queryKey: ['analytics-overview'] }),
+        queryClient.refetchQueries({ queryKey: ['project-metrics'] }),
+        queryClient.refetchQueries({ queryKey: ['reports-trends'] }),
       ]);
     } catch (error: any) {
       toast({
@@ -1210,6 +1227,14 @@ export default function Budget() {
         queryClient.refetchQueries({ queryKey: ['project-budgets'] }),
         queryClient.refetchQueries({ queryKey: ['budget-categories'] }),
         queryClient.refetchQueries({ queryKey: ['budget-items'] }),
+        queryClient.refetchQueries({ queryKey: ['spending-trends'] }),
+        queryClient.refetchQueries({ queryKey: ['budget-forecast'] }),
+        queryClient.refetchQueries({ queryKey: ['projects'] }),
+        queryClient.refetchQueries({ queryKey: ['dashboard-budget-stats'] }),
+        queryClient.refetchQueries({ queryKey: ['dashboard-income-stats'] }),
+        queryClient.refetchQueries({ queryKey: ['analytics-overview'] }),
+        queryClient.refetchQueries({ queryKey: ['project-metrics'] }),
+        queryClient.refetchQueries({ queryKey: ['reports-trends'] }),
       ]);
     } catch (error: any) {
       toast({
@@ -1241,6 +1266,14 @@ export default function Budget() {
         queryClient.refetchQueries({ queryKey: ['project-budgets'] }),
         queryClient.refetchQueries({ queryKey: ['budget-categories'] }),
         queryClient.refetchQueries({ queryKey: ['budget-items'] }),
+        queryClient.refetchQueries({ queryKey: ['spending-trends'] }),
+        queryClient.refetchQueries({ queryKey: ['budget-forecast'] }),
+        queryClient.refetchQueries({ queryKey: ['projects'] }),
+        queryClient.refetchQueries({ queryKey: ['dashboard-budget-stats'] }),
+        queryClient.refetchQueries({ queryKey: ['dashboard-income-stats'] }),
+        queryClient.refetchQueries({ queryKey: ['analytics-overview'] }),
+        queryClient.refetchQueries({ queryKey: ['project-metrics'] }),
+        queryClient.refetchQueries({ queryKey: ['reports-trends'] }),
       ]);
     } catch (error: any) {
       toast({
@@ -1311,6 +1344,12 @@ export default function Budget() {
         queryClient.refetchQueries({ queryKey: ['budget-categories'] }),
         queryClient.refetchQueries({ queryKey: ['spending-trends'] }),
         queryClient.refetchQueries({ queryKey: ['budget-forecast'] }),
+        queryClient.refetchQueries({ queryKey: ['projects'] }),
+        queryClient.refetchQueries({ queryKey: ['dashboard-budget-stats'] }),
+        queryClient.refetchQueries({ queryKey: ['dashboard-income-stats'] }),
+        queryClient.refetchQueries({ queryKey: ['analytics-overview'] }),
+        queryClient.refetchQueries({ queryKey: ['project-metrics'] }),
+        queryClient.refetchQueries({ queryKey: ['reports-trends'] }),
       ]);
     } catch (error: any) {
       toast({
@@ -1344,6 +1383,12 @@ export default function Budget() {
         queryClient.refetchQueries({ queryKey: ['budget-categories'] }),
         queryClient.refetchQueries({ queryKey: ['spending-trends'] }),
         queryClient.refetchQueries({ queryKey: ['budget-forecast'] }),
+        queryClient.refetchQueries({ queryKey: ['projects'] }),
+        queryClient.refetchQueries({ queryKey: ['dashboard-budget-stats'] }),
+        queryClient.refetchQueries({ queryKey: ['dashboard-income-stats'] }),
+        queryClient.refetchQueries({ queryKey: ['analytics-overview'] }),
+        queryClient.refetchQueries({ queryKey: ['project-metrics'] }),
+        queryClient.refetchQueries({ queryKey: ['reports-trends'] }),
       ]);
     } catch (error: any) {
       toast({

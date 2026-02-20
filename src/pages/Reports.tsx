@@ -290,6 +290,19 @@ export default function Reports() {
 
       if (projectsError) throw projectsError;
 
+      const analyticsProjectIds = projects?.map(project => project.id) || [];
+      const { data: allocations, error: allocationsError } = await supabase
+        .from('project_budgets')
+        .select('project_id, budgeted_amount')
+        .in('project_id', analyticsProjectIds);
+
+      if (allocationsError) throw allocationsError;
+
+      const additionalByProject = (allocations || []).reduce((acc, item) => {
+        acc[item.project_id] = (acc[item.project_id] || 0) + (Number(item.budgeted_amount) || 0);
+        return acc;
+      }, {} as Record<string, number>);
+
       // Fetch expenses data for user's projects
       const { data: expenses, error: expensesError } = await supabase
         .from('expenses')
@@ -309,7 +322,11 @@ export default function Reports() {
       const totalProjects = projects?.length || 0;
       const activeProjects = projects?.filter(p => p.status === 'active').length || 0;
       const completedProjects = projects?.filter(p => p.status === 'completed').length || 0;
-      const totalBudget = projects?.reduce((sum, p) => sum + (Number(p.budget) || 0), 0) || 0;
+      const totalBudget = projects?.reduce((sum, project) => {
+        const baseBudget = Number(project.budget) || 0;
+        const additionalBudget = additionalByProject[project.id] || 0;
+        return sum + baseBudget + additionalBudget;
+      }, 0) || 0;
       
       // Calculate actual spent from expenses table
       const totalSpent = expenses?.reduce((sum, e) => sum + (Number(e.amount) || 0), 0) || 0;
@@ -384,6 +401,19 @@ export default function Reports() {
 
       if (projectsError) throw projectsError;
 
+      const metricsProjectIds = projects?.map(project => project.id) || [];
+      const { data: allocations, error: allocationsError } = await supabase
+        .from('project_budgets')
+        .select('project_id, budgeted_amount')
+        .in('project_id', metricsProjectIds);
+
+      if (allocationsError) throw allocationsError;
+
+      const additionalByProject = (allocations || []).reduce((acc, item) => {
+        acc[item.project_id] = (acc[item.project_id] || 0) + (Number(item.budgeted_amount) || 0);
+        return acc;
+      }, {} as Record<string, number>);
+
       // Fetch expenses data for user's projects
       const { data: expenses } = await supabase
         .from('expenses')
@@ -436,8 +466,10 @@ export default function Reports() {
           }
         }
 
+        const effectiveBudget = (Number(project.budget) || 0) + (additionalByProject[project.id] || 0);
+
         // Check budget overrun risk
-        if (spent > Number(project.budget) * 0.9) {
+        if (spent > effectiveBudget * 0.9) {
           riskLevel = riskLevel === 'high' ? 'high' : 'medium';
         }
 
@@ -446,7 +478,7 @@ export default function Reports() {
           name: project.name,
           status: project.status,
           progress: project.progress || 0,
-          budget: Number(project.budget) || 0,
+          budget: effectiveBudget,
           spent,
           daysRemaining,
           teamSize,
@@ -523,6 +555,19 @@ export default function Reports() {
 
       if (projectsError) throw projectsError;
 
+      const trendsProjectIds = projects?.map(project => project.id) || [];
+      const { data: allocations, error: allocationsError } = await supabase
+        .from('project_budgets')
+        .select('project_id, budgeted_amount')
+        .in('project_id', trendsProjectIds);
+
+      if (allocationsError) throw allocationsError;
+
+      const additionalByProject = (allocations || []).reduce((acc, item) => {
+        acc[item.project_id] = (acc[item.project_id] || 0) + (Number(item.budgeted_amount) || 0);
+        return acc;
+      }, {} as Record<string, number>);
+
       // Group expenses by date for spending trend
       const spendingByDate: Record<string, number> = {};
       const categorySpending: Record<string, number> = {};
@@ -580,7 +625,7 @@ export default function Reports() {
       const budgetUtilization = projects?.map(project => {
         const projectExpenses = expenses?.filter(e => e.project_id === project.id) || [];
         const spent = projectExpenses.reduce((sum, e) => sum + Number(e.amount), 0);
-        const budget = Number(project.budget) || 1;
+        const budget = (Number(project.budget) || 0) + (additionalByProject[project.id] || 0) || 1;
         
         return {
           name: project.name.length > 15 ? project.name.substring(0, 15) + '...' : project.name,

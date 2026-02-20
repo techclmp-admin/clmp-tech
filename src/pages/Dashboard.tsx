@@ -244,13 +244,32 @@ const Dashboard = () => {
       
       const { data, error } = await supabase
         .from('projects')
-        .select('budget')
+        .select('id, budget')
         .in('id', projectIds)
-        .eq('status', 'active');
+        .neq('status', 'archived');
       
       if (error) throw error;
+
+      const activeProjectIds = data?.map((project) => project.id) || [];
+      if (activeProjectIds.length === 0) return 0;
+
+      const { data: allocations, error: allocationsError } = await supabase
+        .from('project_budgets')
+        .select('project_id, budgeted_amount')
+        .in('project_id', activeProjectIds);
+
+      if (allocationsError) throw allocationsError;
+
+      const additionalByProject = (allocations || []).reduce((acc, item) => {
+        acc[item.project_id] = (acc[item.project_id] || 0) + (Number(item.budgeted_amount) || 0);
+        return acc;
+      }, {} as Record<string, number>);
       
-      const total = data?.reduce((sum, project) => sum + (project.budget || 0), 0) || 0;
+      const total = data?.reduce((sum, project) => {
+        const baseBudget = Number(project.budget) || 0;
+        const additionalBudget = additionalByProject[project.id] || 0;
+        return sum + baseBudget + additionalBudget;
+      }, 0) || 0;
       return total;
     },
     enabled: !!user?.id,
@@ -301,6 +320,17 @@ const Dashboard = () => {
         },
         () => {
           queryClient.invalidateQueries({ queryKey: ['dashboard-projects'] });
+          queryClient.invalidateQueries({ queryKey: ['dashboard-budget-stats'] });
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'project_budgets'
+        },
+        () => {
           queryClient.invalidateQueries({ queryKey: ['dashboard-budget-stats'] });
         }
       )
