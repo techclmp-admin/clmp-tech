@@ -75,7 +75,9 @@ export function TrialStatusBanner() {
       });
 
       if (response.error) {
-        throw new Error(response.error.message);
+        // Extract detailed error from response data if available
+        const detail = response.data?.error || response.error.message;
+        throw new Error(detail);
       }
 
       const { url } = response.data;
@@ -91,11 +93,12 @@ export function TrialStatusBanner() {
     } catch (error: any) {
       newWindow?.close();
       console.error('Upgrade error:', error);
+      // Fallback: redirect to billing page so user can still upgrade
       toast({
-        title: "Error",
-        description: error.message || "Failed to start checkout process",
-        variant: "destructive",
+        title: "Checkout unavailable",
+        description: "Redirecting you to the billing page to complete your upgrade.",
       });
+      navigate('/billing');
     } finally {
       setIsUpgrading(false);
     }

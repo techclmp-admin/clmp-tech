@@ -38,7 +38,9 @@ const SubscriptionManager = () => {
       });
 
       if (response.error) {
-        throw new Error(response.error.message);
+        // Extract detailed error from response data if available
+        const detail = response.data?.error || response.error.message;
+        throw new Error(detail);
       }
 
       const { url } = response.data;
@@ -56,8 +58,8 @@ const SubscriptionManager = () => {
       newWindow?.close();
       console.error('Subscription error:', error);
       toast({
-        title: "Error",
-        description: error.message || "Failed to start checkout process",
+        title: "Checkout Error",
+        description: "Something went wrong starting the checkout process. Please try again or contact support.",
         variant: "destructive",
       });
     } finally {
@@ -78,7 +80,9 @@ const SubscriptionManager = () => {
       });
 
       if (response.error) {
-        throw new Error(response.error.message);
+        // Extract detailed error from response data if available
+        const detail = response.data?.error || response.error.message;
+        throw new Error(detail);
       }
 
       const { url } = response.data;
@@ -93,8 +97,8 @@ const SubscriptionManager = () => {
       newWindow?.close();
       console.error('Portal error:', error);
       toast({
-        title: "Error",
-        description: error.message || "Failed to open billing portal",
+        title: "Portal Error",
+        description: "Unable to open the billing portal. Please try again or contact support.",
         variant: "destructive",
       });
     } finally {
