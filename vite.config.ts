@@ -1,7 +1,38 @@
-import { defineConfig } from "vite";
+import { defineConfig, Plugin } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { VitePWA } from "vite-plugin-pwa";
+
+/**
+ * Generates a /version.json file in the build output containing the build
+ * timestamp.  The running app fetches this file periodically and compares it
+ * with the version baked into the bundle at build time.  A mismatch means a
+ * new deploy has landed → the app unregisters stale service workers and
+ * reloads so users always run the latest code.
+ */
+function versionStampPlugin(): Plugin {
+  const buildVersion = new Date().toISOString();
+
+  return {
+    name: 'version-stamp',
+    // Expose the build version as an import.meta.env variable
+    config() {
+      return {
+        define: {
+          'import.meta.env.VITE_APP_VERSION': JSON.stringify(buildVersion),
+        },
+      };
+    },
+    // Emit version.json into the build output
+    generateBundle() {
+      this.emitFile({
+        type: 'asset',
+        fileName: 'version.json',
+        source: JSON.stringify({ version: buildVersion }),
+      });
+    },
+  };
+}
 
 // https://vitejs.dev/config/
 export default defineConfig(() => ({
@@ -11,6 +42,7 @@ export default defineConfig(() => ({
   },
   plugins: [
     react(),
+    versionStampPlugin(),
     VitePWA({
       strategies: 'injectManifest',
       srcDir: 'src',
