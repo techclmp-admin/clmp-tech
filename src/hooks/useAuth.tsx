@@ -3,6 +3,7 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
+import { markReturningUser } from '@/hooks/useReturningUser';
 
 interface AuthContextType {
   user: User | null;
@@ -37,6 +38,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         setUser(session?.user ?? null);
         
         if (event === 'SIGNED_IN' && session?.user) {
+          // Remember this browser has an account so the landing page
+          // can show "Login" instead of "Start Free Trial" on future visits
+          markReturningUser();
+
           // Show loading indicator
           setSettingUpAccount(true);
           

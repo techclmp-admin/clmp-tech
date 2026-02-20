@@ -1,13 +1,15 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogIn } from "lucide-react";
 import clmpLogo from "@/assets/clmp-logo.png";
 import ContactDialog from "@/components/ContactDialog";
+import { useReturningUser } from "@/hooks/useReturningUser";
 
 const Navigation = () => {
   const [showContactDialog, setShowContactDialog] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const isReturningUser = useReturningUser();
 
   const navLinks = [
     { href: "#features", label: "Features" },
@@ -61,7 +63,16 @@ const Navigation = () => {
               Book a Demo
             </Button>
             <Button size="sm" className="btn-gradient-primary shadow-3d hover:shadow-3d-hover" asChild>
-              <a href="/auth">Start Free Trial</a>
+              <a href="/auth">
+                {isReturningUser ? (
+                  <>
+                    <LogIn className="mr-1.5 h-4 w-4" />
+                    Login
+                  </>
+                ) : (
+                  'Start Free Trial'
+                )}
+              </a>
             </Button>
           </div>
 
@@ -114,7 +125,16 @@ const Navigation = () => {
                     Book a Demo
                   </Button>
                   <Button className="w-full btn-gradient-primary shadow-3d" asChild>
-                    <a href="/auth">Start Free Trial</a>
+                    <a href="/auth">
+                      {isReturningUser ? (
+                        <>
+                          <LogIn className="mr-1.5 h-4 w-4" />
+                          Login
+                        </>
+                      ) : (
+                        'Start Free Trial'
+                      )}
+                    </a>
                   </Button>
                 </div>
               </div>
