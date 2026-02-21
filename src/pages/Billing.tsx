@@ -1,10 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import SubscriptionManager from "@/components/SubscriptionManager";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, CheckCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+
+const MAX_VERIFY_ATTEMPTS = 3;
+const RETRY_DELAY_MS = 3000;
 
 const Billing = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -13,40 +16,77 @@ const Billing = () => {
   const [verifiedPlan, setVerifiedPlan] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
   const { toast } = useToast();
+  const verifyAttempts = useRef(0);
 
   const success = searchParams.get("success") === "true";
   const canceled = searchParams.get("canceled") === "true";
 
   useEffect(() => {
-    if (success && !verifying && !verified) {
-      const verifySession = async () => {
-        setVerifying(true);
-        try {
-          const response = await supabase.functions.invoke('stripe-verify-session');
-          
-          if (response.error) {
-            console.error("Verify error:", response.error);
-          } else if (response.data?.success) {
-            setVerified(true);
-            setVerifiedPlan(response.data.plan || null);
-            toast({
-              title: "Subscription Activated!",
-              description: `Your ${response.data.plan} plan is now active.`,
-            });
-            setRefreshKey(prev => prev + 1);
-          }
-          
-          setSearchParams({});
-        } catch (error) {
-          console.error("Session verification error:", error);
-        } finally {
-          setVerifying(false);
-        }
-      };
+    if (!success || verified) return;
 
-      verifySession();
-    }
-  }, [success, verifying, verified, toast, setSearchParams]);
+    const verifySession = async () => {
+      setVerifying(true);
+      verifyAttempts.current += 1;
+      const attempt = verifyAttempts.current;
+
+      try {
+        const response = await supabase.functions.invoke('stripe-verify-session');
+
+        if (response.error) {
+          const detail = response.data?.error || response.error.message;
+          console.error("Verify error:", detail);
+          throw new Error(detail);
+        }
+
+        if (response.data?.success) {
+          // Subscription confirmed — show success
+          setVerified(true);
+          setVerifiedPlan(response.data.plan || null);
+          toast({
+            title: "Subscription Activated!",
+            description: `Your ${response.data.plan} plan is now active.`,
+          });
+          setRefreshKey(prev => prev + 1);
+          setSearchParams({});
+          setVerifying(false);
+          return;
+        }
+
+        // Subscription not yet active — retry or give up
+        if (attempt < MAX_VERIFY_ATTEMPTS) {
+          console.log(`Verify attempt ${attempt}/${MAX_VERIFY_ATTEMPTS}: subscription not yet active, retrying in ${RETRY_DELAY_MS}ms...`);
+          setVerifying(false);
+          setTimeout(verifySession, RETRY_DELAY_MS);
+          return;
+        }
+
+        // Exhausted retries
+        console.error("Subscription not active after", MAX_VERIFY_ATTEMPTS, "attempts");
+        toast({
+          title: "Activation Pending",
+          description: "Your payment was received. Your subscription should activate shortly — please refresh the page in a moment.",
+        });
+        setSearchParams({});
+      } catch (error: any) {
+        console.error("Session verification error:", error);
+        if (attempt < MAX_VERIFY_ATTEMPTS) {
+          console.log(`Verify attempt ${attempt} errored, retrying in ${RETRY_DELAY_MS}ms...`);
+          setTimeout(verifySession, RETRY_DELAY_MS);
+          return;
+        }
+        toast({
+          title: "Verification Error",
+          description: "Your payment was received but we couldn't confirm your plan. Please refresh the page.",
+          variant: "destructive",
+        });
+        setSearchParams({});
+      } finally {
+        setVerifying(false);
+      }
+    };
+
+    verifySession();
+  }, [success, verified]);
 
   useEffect(() => {
     if (canceled) {
