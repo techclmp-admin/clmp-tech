@@ -205,15 +205,14 @@ const Sidebar = ({
       color: 'bg-gradient-to-br from-blue-500 to-blue-600',
       menuKey: 'chat'
     },
-    // Temporarily removed - AI Risk Alerts
-    // {
-    //   name: t.alerts,
-    //   href: '/alerts',
-    //   icon: AlertTriangle,
-    //   badge: alertsCount > 0 ? alertsCount.toString() : null,
-    //   color: 'bg-gradient-to-br from-red-500 to-red-600',
-    //   menuKey: 'alerts'
-    // },
+    {
+      name: t.alerts,
+      href: '/alerts',
+      icon: AlertTriangle,
+      badge: alertsCount > 0 ? alertsCount.toString() : null,
+      color: 'bg-gradient-to-br from-red-500 to-red-600',
+      menuKey: 'alerts'
+    },
     // === FINANCE ===
     {
       name: t.budget,
@@ -248,14 +247,14 @@ const Sidebar = ({
       color: 'bg-gradient-to-br from-slate-500 to-slate-600',
       menuKey: 'compliance'
     },
-    // Temporarily removed - CCTV AI System
-    // {
-    //   name: t.cctv,
-    //   href: '/cctv',
-    //   icon: Video,
-    //   color: 'bg-gradient-to-br from-emerald-500 to-emerald-600',
-    //   menuKey: 'cctv'
-    // }
+    {
+      name: t.cctv,
+      href: '/cctv',
+      icon: Video,
+      badge: null,
+      color: 'bg-gradient-to-br from-emerald-500 to-emerald-600',
+      menuKey: 'cctv'
+    }
   ].filter(item => isMenuEnabled(item.menuKey) || isMenuUpcoming(item.menuKey));
 
   // Admin-only navigation
@@ -341,15 +340,11 @@ const Sidebar = ({
           let isUpcoming = !menuEnabled && menuUpcoming;
           let isDisabled = isUpcoming;
 
-          // Special handling for AI Risk Alerts menu - also check feature settings
-          if (item.menuKey === 'alerts') {
-            const featureEnabled = isFeatureEnabled('ai_risk_management');
-            const featureUpcoming = isFeatureUpcoming('ai_risk_management');
-            // Show "Soon" if either menu OR feature is disabled+upcoming
-            if (!featureEnabled && featureUpcoming) {
-              isUpcoming = true;
-              isDisabled = true;
-            }
+          // Features not yet ready — always show "Soon" badge regardless of DB flags
+          const forceUpcomingMenus = ['alerts', 'cctv'];
+          if (forceUpcomingMenus.includes(item.menuKey)) {
+            isUpcoming = true;
+            isDisabled = true;
           }
 
           // Special handling for Integrations menu
