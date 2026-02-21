@@ -102,7 +102,7 @@ export const useSubscription = () => {
       // Define limits based on plan
       const planLimits: Record<string, { maxProjects: number; maxUsers: number }> = {
         free: { maxProjects: 1, maxUsers: 5 },
-        trial: { maxProjects: 3, maxUsers: 10 },
+        trial: { maxProjects: 1, maxUsers: 5 },
         standard: { maxProjects: 10, maxUsers: 25 },
         enterprise: { maxProjects: 20, maxUsers: 100 }
       };

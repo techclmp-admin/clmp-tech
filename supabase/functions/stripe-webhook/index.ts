@@ -82,7 +82,7 @@ serve(async (req) => {
             .from("subscriptions")
             .upsert({
               user_id: userId,
-              plan: planId?.replace(/_monthly|_yearly/, "") || "basic",
+              plan: planId?.replace(/_monthly|_yearly/, "") || "free",
               status: "active",
               stripe_subscription_id: subscription.id,
               stripe_customer_id: session.customer as string,
@@ -99,7 +99,7 @@ serve(async (req) => {
             .from("profiles")
             .update({
               subscription_status: "active",
-              subscription_plan: planId?.replace(/_monthly|_yearly/, "") || "basic",
+              subscription_plan: planId?.replace(/_monthly|_yearly/, "") || "free",
             })
             .eq("user_id", userId);
 
@@ -110,7 +110,7 @@ serve(async (req) => {
         await supabase.from("subscription_history").insert({
           user_id: userId,
           old_plan: "free",
-          new_plan: planId || "basic",
+          new_plan: planId || "free",
           change_reason: "Stripe checkout completed",
         });
 
@@ -140,7 +140,7 @@ serve(async (req) => {
                         subscription.status === "canceled" ? "canceled" : "inactive";
 
           // Get the plan from price lookup_key or product name
-          let planName = "basic";
+          let planName = "free";
           if (subscription.items?.data?.[0]?.price?.lookup_key) {
             const lookupKey = subscription.items.data[0].price.lookup_key;
             planName = lookupKey.replace("price_", "").replace(/_monthly|_yearly/, "");

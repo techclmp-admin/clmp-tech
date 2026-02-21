@@ -56,22 +56,49 @@ serve(async (req) => {
       );
     }
 
-    // Get the customer's active subscriptions directly from Stripe
-    const subscriptions = await stripe.subscriptions.list({
-      customer: customerData.stripe_customer_id,
-      status: "active",
-      limit: 1,
-    });
+    // Get the customer's active subscriptions directly from Stripe.
+    // In sandbox / test mode the subscription may not be "active" yet when
+    // the user is redirected back, so we retry a few times with a short delay.
+    let subscription: Stripe.Subscription | null = null;
+    const maxRetries = 5;
 
-    if (subscriptions.data.length === 0) {
-      console.log("No active subscriptions found in Stripe");
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      const subscriptions = await stripe.subscriptions.list({
+        customer: customerData.stripe_customer_id,
+        status: "active",
+        limit: 1,
+      });
+
+      if (subscriptions.data.length > 0) {
+        subscription = subscriptions.data[0];
+        break;
+      }
+
+      // Also check for "trialing" status which Stripe sometimes uses initially
+      const trialingSubscriptions = await stripe.subscriptions.list({
+        customer: customerData.stripe_customer_id,
+        status: "trialing",
+        limit: 1,
+      });
+
+      if (trialingSubscriptions.data.length > 0) {
+        subscription = trialingSubscriptions.data[0];
+        break;
+      }
+
+      if (attempt < maxRetries) {
+        console.log(`No active subscription yet (attempt ${attempt}/${maxRetries}), retrying in ${attempt}s...`);
+        await new Promise((resolve) => setTimeout(resolve, attempt * 1000));
+      }
+    }
+
+    if (!subscription) {
+      console.log("No active subscriptions found in Stripe after retries");
       return new Response(
-        JSON.stringify({ success: false, message: "No active subscription" }),
+        JSON.stringify({ success: false, message: "No active subscription found. Please wait a moment and refresh the page." }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
       );
     }
-
-    const subscription = subscriptions.data[0];
     console.log("Found active subscription:", subscription.id);
 
     // Determine plan name from price lookup_key or metadata

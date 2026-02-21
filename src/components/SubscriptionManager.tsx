@@ -207,7 +207,7 @@ const SubscriptionManager = ({ verifiedPlan }: SubscriptionManagerProps = {}) =>
                   )}
                   ${plan.price_cad.toLocaleString()} CAD
                   <span className="text-base font-normal text-muted-foreground">
-                    /month/project
+                    /month
                   </span>
                 </div>
                 {plan.price_note && (

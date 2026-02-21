@@ -114,7 +114,7 @@ const PricingSection = () => {
             <CardHeader className="text-center pb-4">
               <CardTitle className="text-2xl font-bold text-foreground mb-2">Standard</CardTitle>
               <div className="text-4xl font-bold text-primary mb-2">$400 CAD</div>
-              <p className="text-muted-foreground">per month / per project</p>
+              <p className="text-muted-foreground">per month</p>
               <p className="text-sm text-primary font-medium mt-2">25% early-adopter discount for the first 12 months</p>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -166,7 +166,7 @@ const PricingSection = () => {
             <CardHeader className="text-center pb-4">
               <CardTitle className="text-2xl font-bold text-foreground mb-2">Enterprise</CardTitle>
               <div className="text-4xl font-bold text-secondary mb-2">Starting at $1,200 CAD</div>
-              <p className="text-muted-foreground">per month / per project</p>
+              <p className="text-muted-foreground">per month</p>
               <p className="text-sm text-secondary font-medium mt-2">Annual agreement recommended</p>
             </CardHeader>
             <CardContent className="space-y-4">
