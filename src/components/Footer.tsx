@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, LogIn } from "lucide-react";
 import clmpLogo from "@/assets/clmp-logo.png";
 import ContactDialog from "@/components/ContactDialog";
+import { useReturningUser } from "@/hooks/useReturningUser";
 
 const Footer = () => {
   const [showContactDialog, setShowContactDialog] = useState(false);
+  const isReturningUser = useReturningUser();
 
   return (
     <>
@@ -32,8 +34,17 @@ const Footer = () => {
                 asChild
               >
                 <a href="/auth">
-                  Start Free for 30 Days
-                  <ArrowRight className="ml-2 h-5 w-5" />
+                  {isReturningUser ? (
+                    <>
+                      <LogIn className="mr-2 h-5 w-5" />
+                      Login to Your Account
+                    </>
+                  ) : (
+                    <>
+                      Start Free for 30 Days
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </>
+                  )}
                 </a>
               </Button>
               <Button 

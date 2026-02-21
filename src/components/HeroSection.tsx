@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight, Play, LogIn } from "lucide-react";
 import heroImage from "@/assets/hero-construction.jpg";
 import ContactDialog from "@/components/ContactDialog";
+import { useReturningUser } from "@/hooks/useReturningUser";
 
 const HeroSection = () => {
   const [showContactDialog, setShowContactDialog] = useState(false);
+  const isReturningUser = useReturningUser();
 
   return (
     <>
@@ -51,14 +53,23 @@ const HeroSection = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-6 mb-12 animate-scale-in">
-            <Button 
-              size="xl" 
+            <Button
+              size="xl"
               className="btn-gradient-primary text-lg px-10 py-4 h-auto font-semibold shadow-3d hover:shadow-3d-hover"
               asChild
             >
               <a href="/auth">
-                Start Free for 30 Days
-                <ArrowRight className="ml-2 h-5 w-5" />
+                {isReturningUser ? (
+                  <>
+                    <LogIn className="mr-2 h-5 w-5" />
+                    Login to Your Account
+                  </>
+                ) : (
+                  <>
+                    Start Free for 30 Days
+                    <ArrowRight className="ml-2 h-5 w-5" />
+                  </>
+                )}
               </a>
             </Button>
             <Button 
