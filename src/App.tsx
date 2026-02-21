@@ -39,6 +39,7 @@ import { BotProtection } from "./components/security/BotProtection";
 import { AdminRoute } from "./components/security/AdminRoute";
 import { SubscriptionGuard } from "./components/SubscriptionGuard";
 import Install from "./pages/Install";
+import { useVersionCheck } from "./hooks/useVersionCheck";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -50,6 +51,9 @@ const queryClient = new QueryClient({
 });
 
 const App = () => {
+  // Check for new deployments and auto-reload when stale code is detected
+  useVersionCheck();
+
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
